@@ -46,22 +46,31 @@
 			height: 400px;
 			background: rgba(255, 0, 170, 0.6);
 			left: 100px;
+			top: 20%;
 		}
 
 		.glow-2 {
 			width: 500px;
 			height: 500px;
 			background: rgba(66, 133, 244, 0.7);
-			bottom: -250px;
-			right: -100px;
+			bottom: -200px;
+			right: 0px;
 		}
 
 		.glow-3 {
 			width: 300px;
 			height: 300px;
 			background: rgba(52, 168, 139, 0.8);
-			top: 50%;
-			left: 40%;
+			top: 10%;
+			left: 50%;
+		}
+
+		.glow-4 {
+			width: 450px;
+			height: 450px;
+			background: rgba(255, 200, 0, 0.5);
+			top: 30%;
+			right: 15%;
 		}
 
 		.sidebar {
@@ -497,6 +506,7 @@
 		<div class="glow-circle glow-1"></div>
 		<div class="glow-circle glow-2"></div>
 		<div class="glow-circle glow-3"></div>
+		<div class="glow-circle glow-4"></div>
 	</div>
 
 	<div class="sidebar">
@@ -875,23 +885,46 @@
 			const glow1 = document.querySelector('.glow-1');
 			const glow2 = document.querySelector('.glow-2');
 			const glow3 = document.querySelector('.glow-3');
+			const glow4 = document.querySelector('.glow-4');
 
-			// Animate glow effects
-			let angle = 0;
+			// For each circle
+			let angles = [0, 45, 90, 135];
+			const speeds = [0.3, 0.4, 0.5, 0.2];
+			const radii = [150, 90, 100, 200];
+
 			setInterval(() => {
-				angle = (angle + 0.5) % 360;
-				const rad = angle * (Math.PI / 180);
+				angles = angles.map((angle, index) => (angle + speeds[index]) % 360);
 
-				// Move glow circles in circular patterns
-				glow1.style.transform = `translate(${Math.sin(rad) * 20}px, ${Math.cos(rad) * 15}px)`;
-				glow2.style.transform = `translate(${Math.cos(rad) * 25}px, ${Math.sin(rad) * 20}px)`;
-				glow3.style.transform = `translate(${Math.sin(rad + 1) * 15}px, ${Math.cos(rad + 1) * 10}px)`;
+				glow1.style.transform = `translate(
+					${Math.sin(angles[0] * (Math.PI / 180)) * radii[0]}px, 
+					${Math.cos(angles[0] * (Math.PI / 180)) * radii[0]}px
+				)`;
 
-				// Pulse opacity
-				const pulse = 0.5 + 0.2 * Math.sin(angle * 0.1);
-				glow1.style.opacity = 0.5 * pulse;
-				glow2.style.opacity = 0.4 * pulse;
-				glow3.style.opacity = 0.3 * pulse;
+				glow2.style.transform = `translate(
+					${Math.cos(angles[1] * (Math.PI / 180)) * radii[1]}px, 
+					${Math.sin(angles[1] * (Math.PI / 180)) * radii[1]}px
+				)`;
+
+				glow3.style.transform = `translate(
+					${Math.sin(angles[2] * (Math.PI / 180) + 0.5) * radii[2]}px, 
+					${Math.cos(angles[2] * (Math.PI / 180) + 0.5) * radii[2]}px
+				)`;
+
+				glow4.style.transform = `translate(
+					${Math.cos(angles[3] * (Math.PI / 180) + 0.3) * radii[3]}px, 
+					${Math.sin(angles[3] * (Math.PI / 180) + 0.3) * radii[3]}px
+				)`;
+
+				const pulse1 = 0.5 + 0.2 * Math.sin(angles[0] * 0.1);
+				const pulse2 = 0.5 + 0.2 * Math.sin(angles[1] * 0.1 + 0.5);
+				const pulse3 = 0.5 + 0.2 * Math.sin(angles[2] * 0.1 + 1);
+				const pulse4 = 0.5 + 0.2 * Math.sin(angles[3] * 0.1 + 1.5);
+
+				glow1.style.opacity = 0.5 * pulse1;
+				glow2.style.opacity = 0.4 * pulse2;
+				glow3.style.opacity = 0.3 * pulse3;
+				glow4.style.opacity = 0.4 * pulse4;
+
 			}, 50);
 		});
 	</script>
