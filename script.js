@@ -40,7 +40,7 @@ class TransportCompanyApp {
     navigateTo(page) {
         if (this.currentPage === page) return;
 
-        // Обновляем активный пункт меню
+        // Активный пункт меню
         document.querySelectorAll('.menu-item').forEach(item => {
             item.classList.remove('active');
             if (item.getAttribute('data-page') === page) {
@@ -54,8 +54,6 @@ class TransportCompanyApp {
 
     async loadPage(page) {
         const container = document.getElementById('content-container');
-
-        // Показываем индикатор загрузки
         container.innerHTML = '<div class="loading">Загрузка...</div>';
 
         try {
@@ -67,8 +65,6 @@ class TransportCompanyApp {
 
             const content = await response.text();
             container.innerHTML = content;
-
-            // Инициализируем специфичные для страницы скрипты
             this.initPageSpecificScripts(page);
 
         } catch (error) {
@@ -234,7 +230,7 @@ class TransportCompanyApp {
     handleAction(button) {
         const action = button.textContent.toLowerCase();
         console.log(`Action: ${action}`);
-        // Здесь можно добавить обработку различных действий
+        // Добавить обработку различных действий
     }
 
     startGlowAnimation() {
@@ -285,5 +281,4 @@ class TransportCompanyApp {
     }
 }
 
-// Инициализация приложения
 const app = new TransportCompanyApp();
