@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Transport company</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+		}
+
+		body {
+			background: #000;
+			color: #fff;
+			min-height: 100vh;
+			display: flex;
+			padding: 16px;
+			position: relative;
+			overflow-x: hidden;
+		}
+
+		.glow-effect {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			z-index: -2;
+			overflow: hidden;
+		}
+
+		.glow-circle {
+			position: absolute;
+			border-radius: 50%;
+			filter: blur(70px);
+			opacity: 0.6;
+		}
+
+		.glow-1 {
+			width: 400px;
+			height: 400px;
+			background: rgba(255, 103, 0, 0.5);
+			top: -200px;
+			left: -100px;
+		}
+
+		.glow-2 {
+			width: 500px;
+			height: 500px;
+			background: rgba(66, 133, 244, 0.4);
+			bottom: -250px;
+			right: -100px;
+		}
+
+		.glow-3 {
+			width: 300px;
+			height: 300px;
+			background: rgba(52, 168, 83, 0.4);
+			top: 50%;
+			left: 40%;
+		}
+
+		.sidebar {
+			width: 280px;
+			margin-right: 20px;
+			height: fit-content;
+		}
+
+		.sidebar-title {
+			font-weight: 600;
+			font-size: 20px;
+			padding: 10px 0;
+		}
+
+		.menu-group {
+			margin-bottom: 20px;
+			background: rgba(40, 40, 40, 0.6);
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+			border-radius: 12px;
+			overflow: hidden;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+		}
+
+		.menu-item {
+			display: flex;
+			align-items: center;
+			padding: 14px 16px;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			background: rgba(50, 50, 50, 0.5);
+			position: relative;
+			border: none;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+		}
+
+		.menu-item:first-child {
+			border-top-left-radius: 12px;
+			border-top-right-radius: 12px;
+		}
+
+		.menu-item:last-child {
+			border-bottom-left-radius: 12px;
+			border-bottom-right-radius: 12px;
+			border-bottom: none;
+		}
+
+		.menu-item:hover {
+			background: rgba(70, 70, 70, 0.7);
+		}
+
+		.menu-item:active {
+			background: rgba(60, 60, 60, 0.7);
+		}
+
+		.icon-wrapper {
+			width: 38px;
+			height: 38px;
+			border-radius: 10px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 14px;
+			flex-shrink: 0;
+		}
+
+		.icon-wrapper i {
+			font-size: 18px;
+			color: white;
+		}
+
+		.icon-wrapper.blue {
+			background: rgba(66, 133, 244, 0.9);
+		}
+
+		.icon-wrapper.green {
+			background: rgba(52, 168, 83, 0.9);
+		}
+
+		.icon-wrapper.yellow {
+			background: rgba(251, 188, 5, 0.9);
+		}
+
+		.icon-wrapper.red {
+			background: rgba(234, 67, 53, 0.9);
+		}
+
+		.icon-wrapper.purple {
+			background: rgba(156, 39, 176, 0.9);
+		}
+
+		.menu-content {
+			flex: 1;
+		}
+
+		.menu-title {
+			font-weight: 500;
+			font-size: 15px;
+			margin-bottom: 2px;
+		}
+
+		.menu-desc {
+			font-size: 12px;
+			color: #aaa;
+		}
+
+		.menu-action {
+			color: #666;
+			margin-left: 10px;
+		}
+
+		.switch {
+			position: relative;
+			display: inline-block;
+			width: 44px;
+			height: 24px;
+		}
+
+		.switch input {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+
+		.slider {
+			position: absolute;
+			cursor: pointer;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: #444;
+			transition: .4s;
+			border-radius: 34px;
+		}
+
+		.slider:before {
+			position: absolute;
+			content: "";
+			height: 18px;
+			width: 18px;
+			left: 3px;
+			bottom: 3px;
+			background-color: white;
+			transition: .4s;
+			border-radius: 50%;
+		}
+
+		input:checked+.slider {
+			background: #0066ff;
+		}
+
+		input:checked+.slider:before {
+			transform: translateX(20px);
+		}
+
+		.main-content {
+			flex: 1;
+		}
+
+		.device-header {
+			text-align: center;
+		}
+
+		.device-name {
+			font-size: 28px;
+			font-weight: 600;
+			margin-bottom: 10px;
+		}
+
+		.os-banner {
+			text-align: center;
+			padding: 28px 0;
+			margin: 20px 0;
+			background: rgba(40, 40, 40, 0.6);
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+			border-radius: 16px;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+		}
+
+		.os-title {
+			font-size: 22px;
+			font-weight: 700;
+			margin-bottom: 8px;
+		}
+
+		.os-year {
+			color: #888;
+			font-size: 15px;
+		}
+
+		.info-grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 1px;
+			background: rgba(255, 255, 255, 0.1);
+			border-radius: 16px;
+			overflow: hidden;
+			margin-top: 20px;
+		}
+
+		.info-item {
+			background: rgba(50, 50, 50, 0.6);
+			padding: 20px;
+			backdrop-filter: blur(10px);
+		}
+
+		.info-item:nth-child(odd) {
+			border-right: 1px solid rgba(255, 255, 255, 0.1);
+		}
+
+		.info-item:nth-child(1),
+		.info-item:nth-child(2) {
+			border-top-left-radius: 16px;
+			border-top-right-radius: 16px;
+		}
+
+		.info-item:nth-last-child(1),
+		.info-item:nth-last-child(2) {
+			border-bottom-left-radius: 16px;
+			border-bottom-right-radius: 16px;
+		}
+
+		.info-label {
+			font-size: 14px;
+			color: #888;
+			margin-bottom: 8px;
+		}
+
+		.info-value {
+			font-size: 16px;
+			font-weight: 500;
+		}
+
+		@media (max-width: 900px) {
+			body {
+				flex-direction: column;
+			}
+
+			.sidebar {
+				width: 100%;
+				margin-right: 0;
+				margin-bottom: 20px;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.info-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.menu-item {
+				padding: 12px;
+			}
+
+			.info-item:nth-child(odd) {
+				border-right: none;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="glow-effect">
+		<div class="glow-circle glow-1"></div>
+		<div class="glow-circle glow-2"></div>
+		<div class="glow-circle glow-3"></div>
+	</div>
+
+	<div class="sidebar">
+		<div class="sidebar-title">Transport company</div>
+
+		<div class="menu-group">
+			<div class="menu-item">
+				<div class="icon-wrapper blue">
+					<i class="fas fa-star"></i>
+				</div>
+				<div class="menu-content">
+					<div class="menu-title">Rate your experience</div>
+					<div class="menu-desc">Tell us how you feel</div>
+				</div>
+				<div class="menu-action">
+					<i class="fas fa-chevron-right"></i>
+				</div>
+			</div>
+
+			<div class="menu-item">
+				<div class="icon-wrapper green">
+					<i class="fa-solid fa-bell"></i>
+				</div>
+				<div class="menu-content">
+					<div class="menu-title">Notifications</div>
+					<div class="menu-desc">On</div>
+				</div>
+				<div class="menu-action">
+					<label class="switch">
+						<input type="checkbox" checked>
+						<span class="slider"></span>
+					</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="menu-group">
+			<div class="menu-item">
+				<div class="icon-wrapper yellow">
+					<i class="fas fa-sync-alt"></i>
+				</div>
+				<div class="menu-content">
+					<div class="menu-title">System apps updater</div>
+				</div>
+				<div class="menu-action">
+					<i class="fas fa-chevron-right"></i>
+				</div>
+			</div>
+
+			<div class="menu-item">
+				<div class="icon-wrapper purple">
+					<i class="fas fa-th-large"></i>
+				</div>
+				<div class="menu-content">
+					<div class="menu-title">Features for tablets</div>
+				</div>
+				<div class="menu-action">
+					<i class="fas fa-chevron-right"></i>
+				</div>
+			</div>
+
+			<div class="menu-item">
+				<div class="icon-wrapper red">
+					<i class="fas fa-shield-alt"></i>
+				</div>
+				<div class="menu-content">
+					<div class="menu-title">Security status</div>
+				</div>
+				<div class="menu-action">
+					<i class="fas fa-chevron-right"></i>
+				</div>
+			</div>
+		</div>
+
+		<div class="menu-group">
+			<div class="menu-item">
+				<div class="icon-wrapper yellow">
+					<i class="fa-solid fa-users"></i>
+				</div>
+				<div class="menu-content">
+					<div class="menu-title">Users</div>
+				</div>
+				<div class="menu-action">
+					<i class="fas fa-chevron-right"></i>
+				</div>
+			</div>
+
+			<div class="menu-item">
+				<div class="icon-wrapper green">
+					<i class="fa-solid fa-truck"></i>
+				</div>
+				<div class="menu-content">
+					<div class="menu-title">Vehicles</div>
+				</div>
+				<div class="menu-action">
+					<i class="fas fa-chevron-right"></i>
+				</div>
+			</div>
+
+			<div class="menu-item">
+				<div class="icon-wrapper yellow">
+					<i class="fas fa-plug"></i>
+				</div>
+				<div class="menu-content">
+					<div class="menu-title">More connectivity options</div>
+				</div>
+				<div class="menu-action">
+					<i class="fas fa-chevron-right"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="main-content">
+		<div class="device-header">
+			<div class="device-name">Xiaomi Pad 6</div>
+		</div>
+
+		<div class="os-banner">
+			<div class="os-title">Xiaomi HyperOS</div>
+			<div class="os-year">2020</div>
+		</div>
+
+		<div class="info-grid">
+			<div class="info-item">
+				<div class="info-label">Device name</div>
+				<div class="info-value">Xiaomi Pad 6</div>
+			</div>
+
+			<div class="info-item">
+				<div class="info-label">Storage</div>
+				<div class="info-value">66.8GB/128GB</div>
+			</div>
+
+			<div class="info-item">
+				<div class="info-label">OS version</div>
+				<div class="info-value">20.2QUIWZHWM</div>
+			</div>
+
+			<div class="info-item">
+				<div class="info-label">Android version</div>
+				<div class="info-value">14 UKQ1.240624.001</div>
+			</div>
+
+			<div class="info-item">
+				<div class="info-label">Android security update</div>
+				<div class="info-value">2025-02-01</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// Add interactivity to menu items
+		document.querySelectorAll('.menu-item').forEach(item => {
+			item.addEventListener('click', function () {
+				const title = this.querySelector('.menu-title').textContent;
+				console.log(`Selected: ${title}`);
+				// Add a subtle "pressed" effect
+				this.style.transform = 'scale(0.99)';
+				setTimeout(() => {
+					this.style.transform = '';
+				}, 100);
+			});
+		});
+
+		// Toggle switches
+		document.querySelectorAll('.switch input').forEach(switchInput => {
+			switchInput.addEventListener('change', function () {
+				const setting = this.closest('.menu-item').querySelector('.menu-title').textContent;
+				const state = this.checked ? 'enabled' : 'disabled';
+				console.log(`${setting} ${state}`);
+				const descElement = this.closest('.menu-item').querySelector('.menu-desc');
+				if (descElement) {
+					descElement.textContent = this.checked ? 'On' : 'Off';
+				}
+			});
+		});
+
+		// Add subtle background animation to glow effects
+		document.addEventListener('DOMContentLoaded', function () {
+			const glow1 = document.querySelector('.glow-1');
+			const glow2 = document.querySelector('.glow-2');
+			const glow3 = document.querySelector('.glow-3');
+
+			// Animate glow effects
+			let angle = 0;
+			setInterval(() => {
+				angle = (angle + 0.5) % 360;
+				const rad = angle * (Math.PI / 180);
+
+				// Move glow circles in circular patterns
+				glow1.style.transform = `translate(${Math.sin(rad) * 20}px, ${Math.cos(rad) * 15}px)`;
+				glow2.style.transform = `translate(${Math.cos(rad) * 25}px, ${Math.sin(rad) * 20}px)`;
+				glow3.style.transform = `translate(${Math.sin(rad + 1) * 15}px, ${Math.cos(rad + 1) * 10}px)`;
+
+				// Pulse opacity
+				const pulse = 0.5 + 0.2 * Math.sin(angle * 0.1);
+				glow1.style.opacity = 0.5 * pulse;
+				glow2.style.opacity = 0.4 * pulse;
+				glow3.style.opacity = 0.3 * pulse;
+			}, 50);
+		});
+	</script>
+</body>
+
+</html>
