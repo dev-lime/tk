@@ -130,7 +130,7 @@
 		}
 
 		.icon-wrapper i {
-			font-size: 18px;
+			font-size: 20px;
 			color: white;
 		}
 
@@ -223,81 +223,6 @@
 			flex: 1;
 		}
 
-		.device-header {
-			text-align: center;
-		}
-
-		.device-name {
-			font-size: 28px;
-			font-weight: 600;
-			margin-bottom: 10px;
-		}
-
-		.os-banner {
-			text-align: center;
-			padding: 28px 0;
-			margin: 20px 0;
-			background: rgba(40, 40, 40, 0.6);
-			backdrop-filter: blur(12px);
-			-webkit-backdrop-filter: blur(12px);
-			border-radius: 16px;
-			border: 1px solid rgba(255, 255, 255, 0.1);
-		}
-
-		.os-title {
-			font-size: 22px;
-			font-weight: 700;
-			margin-bottom: 8px;
-		}
-
-		.os-year {
-			color: #888;
-			font-size: 15px;
-		}
-
-		.info-grid {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			gap: 1px;
-			background: rgba(255, 255, 255, 0.1);
-			border-radius: 16px;
-			overflow: hidden;
-			margin-top: 20px;
-		}
-
-		.info-item {
-			background: rgba(50, 50, 50, 0.6);
-			padding: 20px;
-			backdrop-filter: blur(10px);
-		}
-
-		.info-item:nth-child(odd) {
-			border-right: 1px solid rgba(255, 255, 255, 0.1);
-		}
-
-		.info-item:nth-child(1),
-		.info-item:nth-child(2) {
-			border-top-left-radius: 16px;
-			border-top-right-radius: 16px;
-		}
-
-		.info-item:nth-last-child(1),
-		.info-item:nth-last-child(2) {
-			border-bottom-left-radius: 16px;
-			border-bottom-right-radius: 16px;
-		}
-
-		.info-label {
-			font-size: 14px;
-			color: #888;
-			margin-bottom: 8px;
-		}
-
-		.info-value {
-			font-size: 16px;
-			font-weight: 500;
-		}
-
 		@media (max-width: 900px) {
 			body {
 				flex-direction: column;
@@ -370,43 +295,18 @@
 
 		<div class="menu-group">
 			<div class="menu-item">
-				<div class="icon-wrapper yellow">
-					<i class="fas fa-sync-alt"></i>
+				<div class="icon-wrapper blue">
+					<i class="fa-solid fa-gear"></i>
 				</div>
 				<div class="menu-content">
-					<div class="menu-title">System apps updater</div>
+					<div class="menu-title">Profile</div>
+					<div class="menu-desc">Artem (admin)</div>
 				</div>
 				<div class="menu-action">
 					<i class="fas fa-chevron-right"></i>
 				</div>
 			</div>
 
-			<div class="menu-item">
-				<div class="icon-wrapper purple">
-					<i class="fas fa-th-large"></i>
-				</div>
-				<div class="menu-content">
-					<div class="menu-title">Features for tablets</div>
-				</div>
-				<div class="menu-action">
-					<i class="fas fa-chevron-right"></i>
-				</div>
-			</div>
-
-			<div class="menu-item">
-				<div class="icon-wrapper red">
-					<i class="fas fa-shield-alt"></i>
-				</div>
-				<div class="menu-content">
-					<div class="menu-title">Security status</div>
-				</div>
-				<div class="menu-action">
-					<i class="fas fa-chevron-right"></i>
-				</div>
-			</div>
-		</div>
-
-		<div class="menu-group">
 			<div class="menu-item">
 				<div class="icon-wrapper yellow">
 					<i class="fa-solid fa-users"></i>
@@ -432,11 +332,49 @@
 			</div>
 
 			<div class="menu-item">
-				<div class="icon-wrapper yellow">
-					<i class="fas fa-plug"></i>
+				<div class="icon-wrapper red">
+					<i class="fa-solid fa-box"></i>
 				</div>
 				<div class="menu-content">
-					<div class="menu-title">More connectivity options</div>
+					<div class="menu-title">Orders</div>
+				</div>
+				<div class="menu-action">
+					<i class="fas fa-chevron-right"></i>
+				</div>
+			</div>
+		</div>
+
+		<div class="menu-group">
+			<div class="menu-item">
+				<div class="icon-wrapper purple">
+					<i class="fa-solid fa-person"></i>
+				</div>
+				<div class="menu-content">
+					<div class="menu-title">Clients</div>
+				</div>
+				<div class="menu-action">
+					<i class="fas fa-chevron-right"></i>
+				</div>
+			</div>
+
+			<div class="menu-item">
+				<div class="icon-wrapper green">
+					<i class="fa-solid fa-id-card"></i>
+				</div>
+				<div class="menu-content">
+					<div class="menu-title">Drivers</div>
+				</div>
+				<div class="menu-action">
+					<i class="fas fa-chevron-right"></i>
+				</div>
+			</div>
+
+			<div class="menu-item">
+				<div class="icon-wrapper red">
+					<i class="fa-solid fa-handshake"></i>
+				</div>
+				<div class="menu-content">
+					<div class="menu-title">Dispatchers</div>
 				</div>
 				<div class="menu-action">
 					<i class="fas fa-chevron-right"></i>
@@ -446,41 +384,12 @@
 	</div>
 
 	<div class="main-content">
-		<div class="device-header">
-			<div class="device-name">Xiaomi Pad 6</div>
-		</div>
-
-		<div class="os-banner">
-			<div class="os-title">Xiaomi HyperOS</div>
-			<div class="os-year">2020</div>
-		</div>
-
-		<div class="info-grid">
-			<div class="info-item">
-				<div class="info-label">Device name</div>
-				<div class="info-value">Xiaomi Pad 6</div>
-			</div>
-
-			<div class="info-item">
-				<div class="info-label">Storage</div>
-				<div class="info-value">66.8GB/128GB</div>
-			</div>
-
-			<div class="info-item">
-				<div class="info-label">OS version</div>
-				<div class="info-value">20.2QUIWZHWM</div>
-			</div>
-
-			<div class="info-item">
-				<div class="info-label">Android version</div>
-				<div class="info-value">14 UKQ1.240624.001</div>
-			</div>
-
-			<div class="info-item">
-				<div class="info-label">Android security update</div>
-				<div class="info-value">2025-02-01</div>
-			</div>
-		</div>
+		ID Клиент Откуда Куда Вес (кг) Статус Действия
+		#ORD-001 ООО "Ромашка" Москва Санкт-Петербург 500 В пути
+		#ORD-002 ИП Иванов Казань Екатеринбург 1200 Назначен
+		#ORD-003 ООО "Технопром" Новосибирск Омск 800 Ожидание
+		#ORD-004 ЗАО "Стройматериалы" Воронеж Краснодар 2500 Доставлен
+		#ORD-005 ООО "Агропром" Ростов-на-Дону Волгоград 1500 Отменен
 	</div>
 
 	<script>
