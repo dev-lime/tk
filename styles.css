@@ -51,7 +51,7 @@ body {
     width: 400px;
     height: 400px;
     background: rgba(255, 0, 170, 0.6);
-    left: 100px;
+    left: 10%;
     top: 20%;
 }
 
@@ -59,8 +59,8 @@ body {
     width: 500px;
     height: 500px;
     background: rgba(66, 133, 244, 0.7);
-    bottom: -200px;
-    right: 0px;
+    bottom: -20%;
+    right: 0%;
 }
 
 .glow-3 {
