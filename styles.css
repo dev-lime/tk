@@ -498,17 +498,26 @@ input:checked+.slider:before {
 
 .filter-select {
 	background: rgba(50, 50, 50, 0.6);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: none;
 	border-radius: 8px;
 	padding: 8px 12px;
 	color: #fff;
 	font-size: 14px;
 	cursor: pointer;
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
 }
 
 .filter-select:focus {
 	outline: none;
-	border-color: #4285f4;
+}
+
+option {
+	border: none;
+	padding: 10px;
+	background: rgba(50, 50, 50);
+	color: #fff;
 }
 
 #ordersChart {
