@@ -3,47 +3,39 @@
 		<div class="login-card">
 			<div class="login-logo">
 				<h1>Transport Company</h1>
-				<p>Войдите в свою учетную запись</p>
+				<p>Log in to your account</p>
 			</div>
 
 			<form id="loginForm">
 				<div class="form-group">
-					<label for="email">Имя пользователя</label>
+					<label for="email">Username</label>
 					<div class="input-with-icon">
 						<i class="fas fa-user"></i>
 						<input type="text" id="username" placeholder="Введите ваш username" required>
 					</div>
-					<div class="error-message" id="usernameError">Пожалуйста, введите имя пользователя</div>
+					<div class="error-message" id="usernameError">Please enter your username</div>
 				</div>
 
 				<div class="form-group">
-					<label for="password">Пароль</label>
+					<label for="password">Password</label>
 					<div class="input-with-icon">
 						<i class="fas fa-lock"></i>
 						<input type="password" id="password" placeholder="Введите ваш пароль" required>
 						<i class="fas fa-eye toggle-password"></i>
 					</div>
-					<div class="error-message" id="passwordError">Пароль должен содержать не менее 6 символов</div>
-				</div>
-
-				<div class="remember-forgot">
-					<div class="remember">
-						<input type="checkbox" id="remember">
-						<label for="remember">Запомнить меня</label>
-					</div>
-					<a href="#" class="forgot-password">Забыли пароль?</a>
+					<div class="error-message" id="passwordError">The password must contain at least 6 characters</div>
 				</div>
 
 				<button type="submit" class="login-btn">
-					<span class="btn-text">Войти</span>
+					<span class="btn-text">Login</span>
 					<span class="btn-loading" style="display: none;">
-						<i class="fas fa-spinner fa-spin"></i> Вход...
+						<i class="fas fa-spinner fa-spin"></i> Login...
 					</span>
 				</button>
 			</form>
 
 			<div class="login-footer">
-				<p>Нет аккаунта? <a href="#">Обратитесь к администратору</a></p>
+				<p>No account? <a href="#">Contact the administrator</a></p>
 			</div>
 		</div>
 	</div>
@@ -69,23 +61,11 @@
 		-webkit-backdrop-filter: blur(20px);
 		border-radius: 16px;
 		padding: 40px;
-		border: 1px solid rgba(255, 255, 255, 0.1);
 		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 	}
 
 	.login-logo {
-		text-align: center;
 		margin-bottom: 30px;
-	}
-
-	.login-logo h1 {
-		font-size: 28px;
-		font-weight: 600;
-		margin-bottom: 10px;
-		background: linear-gradient(45deg, #4285f4, #34a853, #fbbc05, #ea4335);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
 	}
 
 	.login-logo p {
@@ -130,7 +110,7 @@
 		width: 100%;
 		padding: 12px 45px 12px 45px;
 		background: rgba(50, 50, 50, 0.6);
-		border: 1px solid rgba(255, 255, 255, 0.1);
+		border: 1px solid rgba(50, 50, 50, 0.6);
 		border-radius: 8px;
 		color: #fff;
 		font-size: 14px;
@@ -154,46 +134,10 @@
 		border-color: #ea4335;
 	}
 
-	.remember-forgot {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 25px;
-	}
-
-	.remember {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
-
-	.remember input {
-		width: 16px;
-		height: 16px;
-	}
-
-	.remember label {
-		color: #aaa;
-		font-size: 14px;
-		cursor: pointer;
-		margin: 0;
-	}
-
-	.forgot-password {
-		color: #4285f4;
-		text-decoration: none;
-		font-size: 14px;
-		transition: color 0.3s ease;
-	}
-
-	.forgot-password:hover {
-		color: #3367d6;
-	}
-
 	.login-btn {
 		width: 100%;
 		padding: 14px;
-		background: linear-gradient(45deg, #4285f4, #3367d6);
+		background: #0066ff;
 		border: none;
 		border-radius: 8px;
 		color: white;
@@ -201,12 +145,10 @@
 		font-weight: 600;
 		cursor: pointer;
 		transition: all 0.3s ease;
-		position: relative;
 	}
 
 	.login-btn:hover {
-		background: linear-gradient(45deg, #3367d6, #2851a3);
-		transform: translateY(-2px);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 	}
 
 	.login-btn:disabled {
@@ -239,12 +181,6 @@
 	@media (max-width: 480px) {
 		.login-card {
 			padding: 30px 20px;
-		}
-
-		.remember-forgot {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 10px;
 		}
 	}
 </style>

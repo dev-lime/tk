@@ -4,7 +4,19 @@ class TransportCompanyApp {
 		this.init();
 	}
 
-	init() {
+	async init() {
+		const isAuthenticated = await this.checkAuth();
+
+		if (!isAuthenticated && this.currentPage !== 'login') {
+			this.loadPage('login');
+			return;
+		}
+
+		if (isAuthenticated && this.currentPage === 'login') {
+			this.loadPage('dashboard');
+			return;
+		}
+
 		this.setupEventListeners();
 		this.loadPage(this.currentPage);
 		this.startGlowAnimation();
@@ -119,6 +131,30 @@ class TransportCompanyApp {
             <div>Please check your connection</div>
             <div>Last check: ${new Date().toLocaleString()}</div>
         `;
+		}
+	}
+
+	async checkAuth() {
+		try {
+			const response = await fetch('api/check_auth.php');
+			const data = await response.json();
+
+			if (data.status === 'success' && data.authenticated) {
+				return true;
+			}
+			return false;
+		} catch (error) {
+			console.error('Auth check failed:', error);
+			return false;
+		}
+	}
+
+	async logout() {
+		try {
+			await fetch('api/logout.php', { method: 'POST' });
+			window.location.reload();
+		} catch (error) {
+			console.error('Logout failed:', error);
 		}
 	}
 
