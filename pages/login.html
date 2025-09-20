@@ -1,0 +1,356 @@
+<div class="login-page">
+	<div class="login-container">
+		<div class="login-card">
+			<div class="login-logo">
+				<h1>Transport Company</h1>
+				<p>Войдите в свою учетную запись</p>
+			</div>
+
+			<form id="loginForm">
+				<div class="form-group">
+					<label for="email">Имя пользователя</label>
+					<div class="input-with-icon">
+						<i class="fas fa-user"></i>
+						<input type="text" id="username" placeholder="Введите ваш username" required>
+					</div>
+					<div class="error-message" id="usernameError">Пожалуйста, введите имя пользователя</div>
+				</div>
+
+				<div class="form-group">
+					<label for="password">Пароль</label>
+					<div class="input-with-icon">
+						<i class="fas fa-lock"></i>
+						<input type="password" id="password" placeholder="Введите ваш пароль" required>
+						<i class="fas fa-eye toggle-password"></i>
+					</div>
+					<div class="error-message" id="passwordError">Пароль должен содержать не менее 6 символов</div>
+				</div>
+
+				<div class="remember-forgot">
+					<div class="remember">
+						<input type="checkbox" id="remember">
+						<label for="remember">Запомнить меня</label>
+					</div>
+					<a href="#" class="forgot-password">Забыли пароль?</a>
+				</div>
+
+				<button type="submit" class="login-btn">
+					<span class="btn-text">Войти</span>
+					<span class="btn-loading" style="display: none;">
+						<i class="fas fa-spinner fa-spin"></i> Вход...
+					</span>
+				</button>
+			</form>
+
+			<div class="login-footer">
+				<p>Нет аккаунта? <a href="#">Обратитесь к администратору</a></p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.login-page {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 60vh;
+		padding: 20px;
+	}
+
+	.login-container {
+		width: 100%;
+		max-width: 400px;
+	}
+
+	.login-card {
+		background: rgba(40, 40, 40, 0.8);
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
+		border-radius: 16px;
+		padding: 40px;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+	}
+
+	.login-logo {
+		text-align: center;
+		margin-bottom: 30px;
+	}
+
+	.login-logo h1 {
+		font-size: 28px;
+		font-weight: 600;
+		margin-bottom: 10px;
+		background: linear-gradient(45deg, #4285f4, #34a853, #fbbc05, #ea4335);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	.login-logo p {
+		color: #aaa;
+		font-size: 14px;
+	}
+
+	.form-group {
+		margin-bottom: 20px;
+	}
+
+	.form-group label {
+		display: block;
+		margin-bottom: 8px;
+		color: #aaa;
+		font-size: 14px;
+		font-weight: 500;
+	}
+
+	.input-with-icon {
+		position: relative;
+	}
+
+	.input-with-icon i:first-child {
+		position: absolute;
+		left: 15px;
+		top: 50%;
+		transform: translateY(-50%);
+		color: #666;
+	}
+
+	.input-with-icon .toggle-password {
+		position: absolute;
+		right: 15px;
+		top: 50%;
+		transform: translateY(-50%);
+		color: #666;
+		cursor: pointer;
+	}
+
+	.input-with-icon input {
+		width: 100%;
+		padding: 12px 45px 12px 45px;
+		background: rgba(50, 50, 50, 0.6);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		color: #fff;
+		font-size: 14px;
+		transition: all 0.3s ease;
+	}
+
+	.input-with-icon input:focus {
+		outline: none;
+		border-color: #4285f4;
+		background: rgba(50, 50, 50, 0.8);
+	}
+
+	.error-message {
+		color: #ea4335;
+		font-size: 12px;
+		margin-top: 5px;
+		display: none;
+	}
+
+	.input-with-icon input.error {
+		border-color: #ea4335;
+	}
+
+	.remember-forgot {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 25px;
+	}
+
+	.remember {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.remember input {
+		width: 16px;
+		height: 16px;
+	}
+
+	.remember label {
+		color: #aaa;
+		font-size: 14px;
+		cursor: pointer;
+		margin: 0;
+	}
+
+	.forgot-password {
+		color: #4285f4;
+		text-decoration: none;
+		font-size: 14px;
+		transition: color 0.3s ease;
+	}
+
+	.forgot-password:hover {
+		color: #3367d6;
+	}
+
+	.login-btn {
+		width: 100%;
+		padding: 14px;
+		background: linear-gradient(45deg, #4285f4, #3367d6);
+		border: none;
+		border-radius: 8px;
+		color: white;
+		font-size: 16px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		position: relative;
+	}
+
+	.login-btn:hover {
+		background: linear-gradient(45deg, #3367d6, #2851a3);
+		transform: translateY(-2px);
+	}
+
+	.login-btn:disabled {
+		opacity: 0.7;
+		cursor: not-allowed;
+		transform: none;
+	}
+
+	.login-footer {
+		text-align: center;
+		margin-top: 25px;
+		color: #aaa;
+		font-size: 14px;
+	}
+
+	.login-footer a {
+		color: #4285f4;
+		text-decoration: none;
+		transition: color 0.3s ease;
+	}
+
+	.login-footer a:hover {
+		color: #3367d6;
+	}
+
+	.btn-loading i {
+		margin-right: 8px;
+	}
+
+	@media (max-width: 480px) {
+		.login-card {
+			padding: 30px 20px;
+		}
+
+		.remember-forgot {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 10px;
+		}
+	}
+</style>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		const loginForm = document.getElementById('loginForm');
+		const togglePassword = document.querySelector('.toggle-password');
+		const passwordInput = document.getElementById('password');
+
+		// Toggle password visibility
+		togglePassword.addEventListener('click', function () {
+			if (passwordInput.type === 'password') {
+				passwordInput.type = 'text';
+				this.classList.remove('fa-eye');
+				this.classList.add('fa-eye-slash');
+			} else {
+				passwordInput.type = 'password';
+				this.classList.remove('fa-eye-slash');
+				this.classList.add('fa-eye');
+			}
+		});
+
+		// Form submission
+		loginForm.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			const username = document.getElementById('username');
+			const password = document.getElementById('password');
+			const usernameError = document.getElementById('usernameError');
+			const passwordError = document.getElementById('passwordError');
+			const loginBtn = document.querySelector('.login-btn');
+			const btnText = document.querySelector('.btn-text');
+			const btnLoading = document.querySelector('.btn-loading');
+
+			let isValid = true;
+
+			// Validation
+			if (!username.value.trim()) {
+				username.classList.add('error');
+				usernameError.style.display = 'block';
+				isValid = false;
+			} else {
+				username.classList.remove('error');
+				usernameError.style.display = 'none';
+			}
+
+			if (!password.value || password.value.length < 6) {
+				password.classList.add('error');
+				passwordError.style.display = 'block';
+				isValid = false;
+			} else {
+				password.classList.remove('error');
+				passwordError.style.display = 'none';
+			}
+
+			if (!isValid) return;
+
+			// Show loading state
+			btnText.style.display = 'none';
+			btnLoading.style.display = 'inline';
+			loginBtn.disabled = true;
+
+			try {
+				const response = await fetch('api/login.php', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						username: username.value.trim(),
+						password: password.value
+					})
+				});
+
+				const data = await response.json();
+
+				if (data.status === 'success') {
+					// Success - reload the page to show dashboard
+					window.location.reload();
+				} else {
+					throw new Error(data.message);
+				}
+
+			} catch (error) {
+				// Show error message
+				const errorDiv = document.createElement('div');
+				errorDiv.className = 'error-message';
+				errorDiv.style.display = 'block';
+				errorDiv.style.textAlign = 'center';
+				errorDiv.style.marginTop = '15px';
+				errorDiv.textContent = error.message;
+
+				// Remove existing error if any
+				const existingError = document.querySelector('.login-error');
+				if (existingError) existingError.remove();
+
+				errorDiv.className = 'error-message login-error';
+				loginForm.appendChild(errorDiv);
+
+			} finally {
+				// Reset loading state
+				btnText.style.display = 'inline';
+				btnLoading.style.display = 'none';
+				loginBtn.disabled = false;
+			}
+		});
+	});
+</script>
