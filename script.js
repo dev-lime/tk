@@ -79,6 +79,49 @@ class TransportCompanyApp {
 		}
 	}
 
+	async checkDatabaseStatus() {
+		const indicator = document.getElementById('dbStatusIndicator');
+		const statusDot = indicator.querySelector('.status-dot');
+		const statusText = indicator.querySelector('span');
+		const tooltipContent = document.getElementById('dbTooltipContent');
+
+		statusDot.className = 'status-dot';
+		statusText.textContent = 'Checking...';
+		tooltipContent.innerHTML = '';
+
+		try {
+			const response = await fetch('api/db_status.php');
+			const data = await response.json();
+
+			if (data.status === 'success') {
+				statusDot.className = 'status-dot connected';
+				statusText.textContent = 'Connected';
+				tooltipContent.innerHTML = `
+                <div>Database: ${data.database.name}</div>
+                <div>Host: ${data.database.host}:${data.database.port}</div>
+                <div>User: ${data.database.user}</div>
+                <div class="success">✓ ${data.message}</div>
+                <div>Last check: ${data.timestamp}</div>
+            `;
+			} else {
+				statusDot.className = 'status-dot error';
+				statusText.textContent = 'Error';
+				tooltipContent.innerHTML = `
+                <div class="error">✗ ${data.message}</div>
+                <div>Last check: ${data.timestamp}</div>
+            `;
+			}
+		} catch (error) {
+			statusDot.className = 'status-dot error';
+			statusText.textContent = 'Connection Failed';
+			tooltipContent.innerHTML = `
+            <div class="error">✗ Network error: ${error.message}</div>
+            <div>Please check your connection</div>
+            <div>Last check: ${new Date().toLocaleString()}</div>
+        `;
+		}
+	}
+
 	initPageSpecificScripts(page) {
 		switch (page) {
 			case 'orders':
@@ -97,6 +140,7 @@ class TransportCompanyApp {
 
 	initDashboardPage() {
 		console.log('Dashboard page initialized');
+		this.checkDatabaseStatus();
 		this.initOrdersChart();
 	}
 
@@ -281,4 +325,11 @@ class TransportCompanyApp {
 	}
 }
 
+function checkDatabaseStatus() {
+	if (window.app && window.app.checkDatabaseStatus) {
+		window.app.checkDatabaseStatus();
+	}
+}
+
 const app = new TransportCompanyApp();
+window.app = app;

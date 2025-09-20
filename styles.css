@@ -525,6 +525,159 @@ option {
 	height: 300px !important;
 }
 
+.db-status-content {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-top: 10px;
+}
+
+.db-status-indicator {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex: 1;
+}
+
+.status-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: #666;
+	animation: pulse 2s infinite;
+}
+
+.status-dot.connected {
+	background: #34a853;
+	animation: none;
+}
+
+.status-dot.error {
+	background: #ea4335;
+	animation: none;
+}
+
+.db-status-indicator span {
+	font-size: 14px;
+	color: #fff;
+	font-weight: 500;
+}
+
+.db-info-tooltip {
+	position: relative;
+	cursor: pointer;
+}
+
+.db-info-tooltip i {
+	color: #666;
+	font-size: 16px;
+	transition: color 0.3s ease;
+}
+
+.db-info-tooltip:hover i {
+	color: #4285f4;
+}
+
+.tooltip-content {
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	background: rgba(30, 30, 30, 0.95);
+	backdrop-filter: blur(10px);
+	border: none;
+	border-radius: 8px;
+	padding: 12px;
+	min-width: 200px;
+	opacity: 0;
+	visibility: hidden;
+	transition: all 0.3s ease;
+	z-index: 1000;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.tooltip-content::after {
+	content: '';
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	border: none;
+}
+
+.db-info-tooltip:hover .tooltip-content {
+	opacity: 1;
+	visibility: visible;
+	bottom: calc(100% + 10px);
+}
+
+.tooltip-content div {
+	font-size: 12px;
+	color: #aaa;
+	margin-bottom: 4px;
+	line-height: 1.4;
+}
+
+.tooltip-content div:last-child {
+	margin-bottom: 0;
+}
+
+.tooltip-content .success {
+	color: #34a853;
+}
+
+.tooltip-content .error {
+	color: #ea4335;
+}
+
+.refresh-btn {
+	background: rgba(66, 133, 244, 0.2);
+	color: #4285f4;
+	border: none;
+	border-radius: 6px;
+	padding: 8px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.refresh-btn:hover {
+	background: rgba(66, 133, 244, 0.3);
+}
+
+.refresh-btn i {
+	font-size: 12px;
+}
+
+@keyframes pulse {
+	0% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.5;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+@media (max-width: 768px) {
+	.db-status-content {
+		flex-wrap: wrap;
+	}
+
+	.db-info-tooltip {
+		order: 3;
+		margin-left: auto;
+	}
+}
+
 @font-face {
 	font-family: 'Mi Sans (Xiaomi)';
 	src: local('Mi Sans (Xiaomi) Light'), local('Mi-Sans-(Xiaomi)-Light'),

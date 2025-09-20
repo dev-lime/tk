@@ -24,6 +24,22 @@
 		<div class="card-value">$12,458</div>
 		<div class="card-trend positive">+8% from last month</div>
 	</div>
+	<div class="dashboard-card">
+		<div class="card-title">Database Status</div>
+		<div class="db-status-content">
+			<div class="db-status-indicator" id="dbStatusIndicator">
+				<div class="status-dot"></div>
+				<span>Checking...</span>
+			</div>
+			<div class="db-info-tooltip">
+				<i class="fas fa-info-circle"></i>
+				<div class="tooltip-content" id="dbTooltipContent"></div>
+			</div>
+			<button class="refresh-btn" onclick="checkDatabaseStatus()">
+				<i class="fas fa-sync-alt"></i>
+			</button>
+		</div>
+	</div>
 </div>
 
 <div class="chart-container">
