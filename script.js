@@ -11,7 +11,7 @@ class TransportCompanyApp {
 	}
 
 	setupEventListeners() {
-		// Навигация по меню
+		// Menu navigation
 		document.querySelectorAll('.menu-item').forEach(item => {
 			item.addEventListener('click', (e) => {
 				const page = item.getAttribute('data-page');
@@ -19,7 +19,7 @@ class TransportCompanyApp {
 			});
 		});
 
-		// Переключение уведомлений
+		// Switching
 		document.querySelectorAll('.switch input').forEach(switchInput => {
 			switchInput.addEventListener('change', function () {
 				const descElement = this.closest('.menu-item').querySelector('.menu-desc');
@@ -29,7 +29,7 @@ class TransportCompanyApp {
 			});
 		});
 
-		// Обработка кнопок действий
+		// Processing of action buttons
 		document.addEventListener('click', (e) => {
 			if (e.target.classList.contains('action-btn')) {
 				this.handleAction(e.target);
@@ -40,7 +40,7 @@ class TransportCompanyApp {
 	navigateTo(page) {
 		if (this.currentPage === page) return;
 
-		// Активный пункт меню
+		// Active menu item
 		document.querySelectorAll('.menu-item').forEach(item => {
 			item.classList.remove('active');
 			if (item.getAttribute('data-page') === page) {
@@ -87,7 +87,7 @@ class TransportCompanyApp {
 			case 'dashboard':
 				this.initDashboardPage();
 				break;
-			// Добавить другие страницы
+			// Add other pages
 		}
 	}
 
@@ -230,7 +230,7 @@ class TransportCompanyApp {
 	handleAction(button) {
 		const action = button.textContent.toLowerCase();
 		console.log(`Action: ${action}`);
-		// Добавить обработку различных действий
+		// Add processing of various actions
 	}
 
 	startGlowAnimation() {
