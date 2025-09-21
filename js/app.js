@@ -1,148 +1,63 @@
 class TransportCompanyApp {
 	constructor() {
-		this.currentPage = 'dashboard';
+		this.currentPage = null;
+		this.currentPageInstance = null;
+		this.pages = {
+			'dashboard': DashboardPage,
+			'login': LoginPage,
+			'orders': OrdersPage,
+			'vehicles': BasePage,
+			'users': BasePage,
+			'clients': BasePage,
+			'drivers': BasePage,
+			'dispatchers': BasePage,
+			'profile': BasePage,
+			'notifications': BasePage
+		};
+
 		this.init();
 	}
 
 	async init() {
 		const isAuthenticated = await this.checkAuth();
 
-		if (!isAuthenticated && this.currentPage !== 'login') {
-			this.loadPage('login');
-			return;
-		}
-
-		if (isAuthenticated && this.currentPage === 'login') {
-			this.loadPage('dashboard');
-			return;
-		}
+		const initialPage = isAuthenticated ? 'dashboard' : 'login';
+		this.setActivePage(initialPage);
 
 		this.setupEventListeners();
-		this.loadPage(this.currentPage);
 		this.startGlowAnimation();
 	}
 
-	setupEventListeners() {
-		// Menu navigation
-		document.querySelectorAll('.menu-item').forEach(item => {
-			item.addEventListener('click', (e) => {
-				const page = item.getAttribute('data-page');
-				this.navigateTo(page);
-			});
-		});
+	async setActivePage(pageName) {
+		if (this.currentPageInstance) {
+			await this.currentPageInstance.destroy();
+		}
 
-		// Switching
-		document.querySelectorAll('.switch input').forEach(switchInput => {
-			switchInput.addEventListener('change', function () {
-				const descElement = this.closest('.menu-item').querySelector('.menu-desc');
-				if (descElement) {
-					descElement.textContent = this.checked ? 'On' : 'Off';
-				}
-			});
-		});
+		const PageClass = this.pages[pageName] || BasePage;
+		this.currentPageInstance = new PageClass();
+		this.currentPage = pageName;
 
-		// Processing of action buttons
-		document.addEventListener('click', (e) => {
-			if (e.target.classList.contains('action-btn')) {
-				this.handleAction(e.target);
-			}
-		});
+		const content = await this.currentPageInstance.load();
+		document.getElementById('content-container').innerHTML = content;
+
+		await this.currentPageInstance.init();
+		this.updateMenuActiveState(pageName);
 	}
 
-	navigateTo(page) {
-		if (this.currentPage === page) return;
-
-		// Active menu item
+	updateMenuActiveState(pageName) {
 		document.querySelectorAll('.menu-item').forEach(item => {
 			item.classList.remove('active');
-			if (item.getAttribute('data-page') === page) {
+			if (item.getAttribute('data-page') === pageName) {
 				item.classList.add('active');
 			}
 		});
-
-		this.currentPage = page;
-		this.loadPage(page);
-	}
-
-	async loadPage(page) {
-		const container = document.getElementById('content-container');
-		container.innerHTML = '<div class="loading">Загрузка...</div>';
-
-		try {
-			const response = await fetch(`pages/${page}.html`);
-
-			if (!response.ok) {
-				throw new Error(`Ошибка загрузки: ${response.status}`);
-			}
-
-			const content = await response.text();
-			container.innerHTML = content;
-			this.initPageSpecificScripts(page);
-
-		} catch (error) {
-			console.error('Ошибка загрузки страницы:', error);
-			container.innerHTML = `
-                <div class="error">
-                    <h3>Ошибка загрузки страницы</h3>
-                    <p>${error.message}</p>
-                    <button class="action-btn" onclick="app.loadPage('${page}')">Повторить</button>
-                </div>
-            `;
-		}
-	}
-
-	async checkDatabaseStatus() {
-		const indicator = document.getElementById('dbStatusIndicator');
-		const statusDot = indicator.querySelector('.status-dot');
-		const statusText = indicator.querySelector('span');
-		const tooltipContent = document.getElementById('dbTooltipContent');
-
-		statusDot.className = 'status-dot';
-		statusText.textContent = 'Checking...';
-		tooltipContent.innerHTML = '';
-
-		try {
-			const response = await fetch('api/db_status.php');
-			const data = await response.json();
-
-			if (data.status === 'success') {
-				statusDot.className = 'status-dot connected';
-				statusText.textContent = 'Connected';
-				tooltipContent.innerHTML = `
-                <div>Database: ${data.database.name}</div>
-                <div>Host: ${data.database.host}:${data.database.port}</div>
-                <div>User: ${data.database.user}</div>
-                <div class="success">✓ ${data.message}</div>
-                <div>Last check: ${data.timestamp}</div>
-            `;
-			} else {
-				statusDot.className = 'status-dot error';
-				statusText.textContent = 'Error';
-				tooltipContent.innerHTML = `
-                <div class="error">✗ ${data.message}</div>
-                <div>Last check: ${data.timestamp}</div>
-            `;
-			}
-		} catch (error) {
-			statusDot.className = 'status-dot error';
-			statusText.textContent = 'Connection Failed';
-			tooltipContent.innerHTML = `
-            <div class="error">✗ Network error: ${error.message}</div>
-            <div>Please check your connection</div>
-            <div>Last check: ${new Date().toLocaleString()}</div>
-        `;
-		}
 	}
 
 	async checkAuth() {
 		try {
 			const response = await fetch('api/check_auth.php');
 			const data = await response.json();
-
-			if (data.status === 'success' && data.authenticated) {
-				return true;
-			}
-			return false;
+			return data.status === 'success' && data.authenticated;
 		} catch (error) {
 			console.error('Auth check failed:', error);
 			return false;
@@ -152,165 +67,32 @@ class TransportCompanyApp {
 	async logout() {
 		try {
 			await fetch('api/logout.php', { method: 'POST' });
-			window.location.reload();
+			await this.setActivePage('login');
 		} catch (error) {
 			console.error('Logout failed:', error);
 		}
 	}
 
-	initPageSpecificScripts(page) {
-		switch (page) {
-			case 'orders':
-				this.initOrdersPage();
-				break;
-			case 'dashboard':
-				this.initDashboardPage();
-				break;
-			// Add other pages
-		}
-	}
-
-	initOrdersPage() {
-		console.log('Orders page initialized');
-	}
-
-	initDashboardPage() {
-		console.log('Dashboard page initialized');
-		this.checkDatabaseStatus();
-		this.initOrdersChart();
-	}
-
-	initOrdersChart() {
-		const ctx = document.getElementById('ordersChart').getContext('2d');
-		const data = {
-			labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-			datasets: [
-				{
-					label: 'Completed Orders',
-					data: [8, 12, 10, 22, 18, 6, 2],
-					borderColor: '#34a853',
-					backgroundColor: 'rgba(52, 168, 83, 0.1)',
-					borderWidth: 3,
-					fill: true,
-					tension: 0.4,
-					pointBackgroundColor: '#34a853',
-					pointBorderColor: '#000',
-					pointBorderWidth: 2,
-					pointRadius: 5,
-					pointHoverRadius: 7
-				},
-				{
-					label: 'Pending Orders',
-					data: [12, 19, 15, 6, 9, 8, 5],
-					borderColor: '#fbbc05',
-					backgroundColor: 'rgba(251, 188, 5, 0.1)',
-					borderWidth: 3,
-					fill: true,
-					tension: 0.4,
-					pointBackgroundColor: '#fbbc05',
-					pointBorderColor: '#000',
-					pointBorderWidth: 2,
-					pointRadius: 5,
-					pointHoverRadius: 7
-				},
-				{
-					label: 'Cancelled Orders',
-					data: [2, 3, 1, 5, 2, 1, 0],
-					borderColor: '#ea4335',
-					backgroundColor: 'rgba(234, 67, 53, 0.1)',
-					borderWidth: 3,
-					fill: true,
-					tension: 0.4,
-					pointBackgroundColor: '#ea4335',
-					pointBorderColor: '#000',
-					pointBorderWidth: 2,
-					pointRadius: 5,
-					pointHoverRadius: 7
+	setupEventListeners() {
+		// Navigation
+		document.querySelectorAll('.menu-item').forEach(item => {
+			item.addEventListener('click', (e) => {
+				const pageName = item.getAttribute('data-page');
+				if (pageName && this.pages[pageName]) {
+					this.setActivePage(pageName);
 				}
-			]
-		};
-		const config = {
-			type: 'line',
-			data: data,
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
-				plugins: {
-					legend: {
-						position: 'none',
-						labels: {
-							color: '#fff',
-							font: {
-								size: 12
-							},
-							usePointStyle: true,
-							padding: 20
-						}
-					},
-					tooltip: {
-						backgroundColor: 'rgba(30, 30, 30, 0.9)',
-						titleColor: '#fff',
-						bodyColor: '#fff',
-						borderColor: 'rgba(255, 255, 255, 0.1)',
-						borderWidth: 1,
-						padding: 12,
-						cornerRadius: 8,
-						displayColors: true,
-						callbacks: {
-							label: function (context) {
-								return `${context.dataset.label}: ${context.parsed.y} orders`;
-							}
-						}
-					}
-				},
-				scales: {
-					x: {
-						grid: {
-							color: 'rgba(255, 255, 255, 0.1)',
-							borderColor: 'rgba(255, 255, 255, 0.1)'
-						},
-						ticks: {
-							color: '#aaa',
-							font: {
-								size: 11
-							}
-						}
-					},
-					y: {
-						grid: {
-							color: 'rgba(255, 255, 255, 0.1)',
-							borderColor: 'rgba(255, 255, 255, 0.1)'
-						},
-						ticks: {
-							color: '#aaa',
-							font: {
-								size: 11
-							},
-							precision: 0
-						},
-						beginAtZero: true
-					}
-				},
-				interaction: {
-					mode: 'index',
-					intersect: false
-				},
-				animations: {
-					tension: {
-						duration: 1000,
-						easing: 'linear'
-					}
+			});
+		});
+
+		// Switcher
+		document.querySelectorAll('.switch input').forEach(switchInput => {
+			switchInput.addEventListener('change', function () {
+				const descElement = this.closest('.menu-item').querySelector('.menu-desc');
+				if (descElement) {
+					descElement.textContent = this.checked ? 'On' : 'Off';
 				}
-			}
-		};
-
-		new Chart(ctx, config);
-	}
-
-	handleAction(button) {
-		const action = button.textContent.toLowerCase();
-		console.log(`Action: ${action}`);
-		// Add processing of various actions
+			});
+		});
 	}
 
 	startGlowAnimation() {
@@ -361,9 +143,16 @@ class TransportCompanyApp {
 	}
 }
 
+// Global functions
 function checkDatabaseStatus() {
-	if (window.app && window.app.checkDatabaseStatus) {
-		window.app.checkDatabaseStatus();
+	if (window.app?.currentPageInstance?.checkDatabaseStatus) {
+		window.app.currentPageInstance.checkDatabaseStatus();
+	}
+}
+
+function logout() {
+	if (window.app) {
+		window.app.logout();
 	}
 }
 
