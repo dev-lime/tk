@@ -251,8 +251,6 @@ input:checked+.slider:before {
 	flex: 1;
 	height: calc(100vh - 32px);
 	overflow-y: auto;
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
 	padding: 20px;
 }
 
