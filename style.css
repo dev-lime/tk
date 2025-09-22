@@ -561,3 +561,260 @@ option {
 		padding: 12px;
 	}
 }
+
+/* Table Styles */
+.table-container {
+	background: rgba(255, 255, 255, 0.05);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border-radius: 12px;
+	overflow: hidden;
+	margin: 20px 0;
+}
+
+.data-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.data-table th {
+	background: rgba(255, 255, 255, 0.05);
+	padding: 16px;
+	text-align: left;
+	font-weight: 300;
+	color: #fff;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	cursor: pointer;
+	user-select: none;
+}
+
+.data-table th:hover {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.data-table td {
+	padding: 16px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	color: #ccc;
+}
+
+.data-table tr:last-child td {
+	border-bottom: none;
+}
+
+.data-table tr:hover {
+	background: rgba(255, 255, 255, 0.02);
+}
+
+/* Status Badges */
+.status-badge {
+	padding: 4px 12px;
+	border-radius: 20px;
+	font-size: 12px;
+	font-weight: 500;
+	text-transform: capitalize;
+}
+
+.status-badge.success {
+	background: rgba(52, 168, 83, 0.2);
+	color: #34a853;
+}
+
+.status-badge.warning {
+	background: rgba(251, 188, 5, 0.2);
+	color: #fbbc05;
+}
+
+.status-badge.error {
+	background: rgba(234, 67, 53, 0.2);
+	color: #ea4335;
+}
+
+.status-badge.info {
+	background: rgba(66, 133, 244, 0.2);
+	color: #4285f4;
+}
+
+.status-badge.primary {
+	background: rgba(66, 133, 244, 0.2);
+	color: #4285f4;
+}
+
+.status-badge.default {
+	background: rgba(255, 255, 255, 0.1);
+	color: #ccc;
+}
+
+/* Role Badges */
+.role-badge {
+	display: inline-block;
+	background: rgba(66, 133, 244, 0.2);
+	color: #8ab4f8;
+	padding: 2px 8px;
+	border-radius: 12px;
+	font-size: 11px;
+	margin: 2px;
+}
+
+/* Buttons */
+.btn-icon {
+	background: rgba(255, 255, 255, 0.05);
+	height: 36px;
+	width: 36px;
+	border: none;
+	border-radius: 50%;
+	color: #ccc;
+	cursor: pointer;
+	margin: 0 2px;
+	transition: all 0.3s ease;
+}
+
+.btn-icon:hover {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-icon.danger {
+	color: #ea4335;
+}
+
+.btn-icon.danger:hover {
+	background: rgba(234, 67, 53, 0.1);
+}
+
+/* Filters */
+.filters-section {
+	background: rgba(255, 255, 255, 0.05);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border-radius: 12px;
+	padding: 20px;
+	margin: 20px 0;
+}
+
+.filter-group {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.filter-input,
+.filter-select {
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0);
+	border-radius: 6px;
+	padding: 10px 12px;
+	color: white;
+	min-width: 150px;
+}
+
+.filter-input::placeholder {
+	color: #666;
+}
+
+.filter-btn,
+.reset-filters {
+	background: rgba(66, 133, 244, 0.2);
+	border: none;
+	color: #8ab4f8;
+	padding: 10px 16px;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.filter-btn:hover,
+.reset-filters:hover {
+	background: rgba(66, 133, 244, 0.3);
+}
+
+.reset-filters {
+	background: rgba(255, 255, 255, 0.05);
+	color: #ccc;
+}
+
+/* Pagination */
+.pagination {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	justify-content: center;
+	margin: 20px 0;
+}
+
+.page-btn {
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: #ccc;
+	padding: 8px 12px;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.page-btn:hover:not(.disabled) {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.page-btn.active {
+	background: rgba(66, 133, 244, 0.3);
+	border-color: rgba(66, 133, 244, 0.5);
+	color: #8ab4f8;
+}
+
+.page-btn.disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.pagination-info {
+	color: #666;
+	font-size: 14px;
+	margin-left: 16px;
+}
+
+.pagination-ellipsis {
+	color: #666;
+	padding: 0 8px;
+}
+
+/* Header Actions */
+.header-actions {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+}
+
+/* Actions Cell */
+.actions-cell {
+	display: flex;
+	gap: 4px;
+	justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.filter-group {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.filter-input,
+	.filter-select {
+		min-width: auto;
+	}
+
+	.data-table {
+		font-size: 14px;
+	}
+
+	.data-table th,
+	.data-table td {
+		padding: 12px 8px;
+	}
+
+	.header-actions {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
