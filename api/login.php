@@ -24,24 +24,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			// Getting user roles
 			$roles = getUserRoles($user['user_id']);
 
+			// Getting specialized info
+			$specializedInfo = getUserSpecializedInfo($user['user_id']);
+
 			// Saving it to the session
 			$_SESSION['user'] = [
 				'id' => $user['user_id'],
 				'username' => $user['username'],
 				'first_name' => $user['first_name'],
 				'last_name' => $user['last_name'],
+				'middle_name' => $user['middle_name'],
+				'email' => $user['email'],
+				'phone' => $user['phone'],
+				'created_at' => $user['created_at'],
 				'roles' => $roles,
+				'specialized_info' => $specializedInfo,
 				'logged_in' => true
 			];
 
 			echo json_encode([
 				'status' => 'success',
 				'message' => 'Login successful',
-				'user' => [
-					'first_name' => $user['first_name'],
-					'last_name' => $user['last_name'],
-					'roles' => $roles
-				]
+				'user' => $_SESSION['user']
 			]);
 		} else {
 			echo json_encode([

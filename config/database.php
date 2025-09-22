@@ -13,7 +13,7 @@ function authenticateUser($username, $password)
 {
 	$con = getDBConnection();
 
-	$query = "SELECT user_id, username, password_hash, first_name, last_name 
+	$query = "SELECT user_id, username, password_hash, first_name, last_name, middle_name, email, phone, created_at
               FROM users WHERE username = $1";
 	$result = pg_query_params($con, $query, [$username]);
 
@@ -40,9 +40,9 @@ function getUserRoles($userId)
 {
 	$con = getDBConnection();
 
-	$query = "SELECT r.role_name 
-              FROM user_roles ur 
-              JOIN roles r ON ur.role_id = r.role_id 
+	$query = "SELECT r.role_name
+              FROM user_roles ur
+              JOIN roles r ON ur.role_id = r.role_id
               WHERE ur.user_id = $1";
 	$result = pg_query_params($con, $query, [$userId]);
 
@@ -54,6 +54,36 @@ function getUserRoles($userId)
 	return $roles;
 }
 
+// Function to get user specialized info
+function getUserSpecializedInfo($userId)
+{
+	$con = getDBConnection();
+	$info = [];
+
+	// Check if user is a client
+	$clientQuery = "SELECT company_name FROM clients WHERE user_id = $1";
+	$clientResult = pg_query_params($con, $clientQuery, [$userId]);
+	if (pg_num_rows($clientResult) > 0) {
+		$info['client'] = pg_fetch_assoc($clientResult);
+	}
+
+	// Check if user is a driver
+	$driverQuery = "SELECT license_number FROM drivers WHERE user_id = $1";
+	$driverResult = pg_query_params($con, $driverQuery, [$userId]);
+	if (pg_num_rows($driverResult) > 0) {
+		$info['driver'] = pg_fetch_assoc($driverResult);
+	}
+
+	// Check if user is a dispatcher
+	$dispatcherQuery = "SELECT 1 FROM dispatchers WHERE user_id = $1";
+	$dispatcherResult = pg_query_params($con, $dispatcherQuery, [$userId]);
+	if (pg_num_rows($dispatcherResult) > 0) {
+		$info['dispatcher'] = true;
+	}
+
+	return $info;
+}
+
 function registerClient($userData)
 {
 	$con = getDBConnection();
@@ -62,7 +92,7 @@ function registerClient($userData)
 		pg_query($con, "BEGIN");
 
 		// Create user
-		$userQuery = "INSERT INTO users (username, password_hash, last_name, first_name, middle_name, phone, email) 
+		$userQuery = "INSERT INTO users (username, password_hash, last_name, first_name, middle_name, phone, email)
                      VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING user_id";
 
 		$hashedPassword = password_hash($userData['password'], PASSWORD_DEFAULT);
@@ -84,7 +114,7 @@ function registerClient($userData)
 		$userId = pg_fetch_result($userResult, 0, 0);
 
 		// Add client role
-		$roleQuery = "INSERT INTO user_roles (user_id, role_id) 
+		$roleQuery = "INSERT INTO user_roles (user_id, role_id)
                      VALUES ($1, (SELECT role_id FROM roles WHERE role_name = 'client'))";
 
 		$roleResult = pg_query_params($con, $roleQuery, [$userId]);
@@ -94,7 +124,7 @@ function registerClient($userData)
 		}
 
 		// Create client record
-		$clientQuery = "INSERT INTO clients (user_id, company_name) 
+		$clientQuery = "INSERT INTO clients (user_id, company_name)
                        VALUES ($1, $2)";
 
 		$clientResult = pg_query_params($con, $clientQuery, [

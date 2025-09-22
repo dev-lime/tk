@@ -55,9 +55,57 @@ class ProfilePage extends BasePage {
 		document.getElementById('profileEmail').textContent = user.email || '-';
 		document.getElementById('profilePhone').textContent = user.phone || '-';
 
-		// Additional info (you'll need to add these fields to your API)
-		document.getElementById('profileRegDate').textContent = user.registration_date || '-';
-		document.getElementById('profileLastLogin').textContent = user.last_login || '-';
+		// Registration date
+		const regDate = user.registration_date ?
+			new Date(user.registration_date).toLocaleDateString('ru-RU') : '-';
+		document.getElementById('profileRegDate').textContent = regDate;
+
+		// Specialized information
+		this.displaySpecializedInfo(user.specialized_info);
+	}
+
+	displaySpecializedInfo(specializedInfo) {
+		const specializedSection = document.getElementById('specializedInfo');
+		if (!specializedInfo || Object.keys(specializedInfo).length === 0) {
+			specializedSection.style.display = 'none';
+			return;
+		}
+
+		let specializedHTML = '';
+
+		if (specializedInfo.client) {
+			specializedHTML += `
+                <div class="detail-item">
+                    <label class="detail-label">Company</label>
+                    <p class="detail-value">${specializedInfo.client.company_name || '-'}</p>
+                </div>
+            `;
+		}
+
+		if (specializedInfo.driver) {
+			specializedHTML += `
+                <div class="detail-item">
+                    <label class="detail-label">Driver License</label>
+                    <p class="detail-value">${specializedInfo.driver.license_number}</p>
+                </div>
+            `;
+		}
+
+		if (specializedInfo.dispatcher) {
+			specializedHTML += `
+                <div class="detail-item">
+                    <label class="detail-label">Position</label>
+                    <p class="detail-value">Dispatcher</p>
+                </div>
+            `;
+		}
+
+		if (specializedHTML) {
+			specializedSection.innerHTML = specializedHTML;
+			specializedSection.style.display = 'block';
+		} else {
+			specializedSection.style.display = 'none';
+		}
 	}
 
 	showError(message) {

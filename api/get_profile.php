@@ -18,8 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 		// Get detailed user information
 		$con = getDBConnection();
 		$query = "SELECT u.user_id, u.username, u.first_name, u.last_name, u.middle_name, 
-                         u.email, u.phone, u.created_at as registration_date,
-                         u.last_login
+                         u.email, u.phone, u.created_at as registration_date
                   FROM users u 
                   WHERE u.user_id = $1";
 
@@ -32,23 +31,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 		$user = pg_fetch_assoc($result);
 
 		// Get user roles
-		$rolesQuery = "SELECT r.role_name 
-                       FROM user_roles ur 
-                       JOIN roles r ON ur.role_id = r.role_id 
-                       WHERE ur.user_id = $1";
-		$rolesResult = pg_query_params($con, $rolesQuery, [$userId]);
+		$roles = getUserRoles($userId);
 
-		$roles = [];
-		while ($row = pg_fetch_assoc($rolesResult)) {
-			$roles[] = $row['role_name'];
-		}
+		// Get specialized info
+		$specializedInfo = getUserSpecializedInfo($userId);
 
-		$user['roles'] = $roles;
-		$user['id'] = $user['user_id'];
+		// Prepare response
+		$userData = [
+			'id' => $user['user_id'],
+			'username' => $user['username'],
+			'first_name' => $user['first_name'],
+			'last_name' => $user['last_name'],
+			'middle_name' => $user['middle_name'],
+			'email' => $user['email'],
+			'phone' => $user['phone'],
+			'registration_date' => $user['registration_date'],
+			'roles' => $roles,
+			'specialized_info' => $specializedInfo
+		];
 
 		echo json_encode([
 			'status' => 'success',
-			'user' => $user
+			'user' => $userData
 		]);
 
 	} catch (Exception $e) {
