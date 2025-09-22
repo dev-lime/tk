@@ -2,6 +2,7 @@ class TransportCompanyApp {
 	constructor() {
 		this.currentPage = null;
 		this.currentPageInstance = null;
+		this.currentUser = null;
 		this.pages = {
 			'dashboard': DashboardPage,
 			'login': LoginPage,
@@ -19,13 +20,16 @@ class TransportCompanyApp {
 	}
 
 	async init() {
-		const isAuthenticated = await this.checkAuth();
+		const authResult = await this.checkAuth();
+		const isAuthenticated = authResult.authenticated;
+		this.currentUser = authResult.user;
 
 		const initialPage = isAuthenticated ? 'dashboard' : 'login';
 		this.setActivePage(initialPage);
 
 		this.setupEventListeners();
 		this.startGlowAnimation();
+		this.updateUserInfoInSidebar();
 	}
 
 	async setActivePage(pageName) {
@@ -53,14 +57,28 @@ class TransportCompanyApp {
 		});
 	}
 
+	updateUserInfoInSidebar() {
+		if (!this.currentUser) return;
+
+		const profileDesc = document.querySelector('.menu-item[data-page="profile"] .menu-desc');
+		if (profileDesc) {
+			const roles = this.currentUser.roles ? this.currentUser.roles.join(', ') : 'user';
+			profileDesc.textContent = `${this.currentUser.first_name} ${this.currentUser.last_name} (${roles})`;
+			// ${this.currentUser.username}
+		}
+	}
+
 	async checkAuth() {
 		try {
 			const response = await fetch('api/check_auth.php');
 			const data = await response.json();
-			return data.status === 'success' && data.authenticated;
+			return {
+				authenticated: data.status === 'success' && data.authenticated,
+				user: data.user || null
+			};
 		} catch (error) {
 			console.error('Auth check failed:', error);
-			return false;
+			return { authenticated: false, user: null };
 		}
 	}
 
