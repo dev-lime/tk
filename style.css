@@ -15,6 +15,15 @@ body {
 	overflow-x: hidden;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: 300;
+}
+
 ::-webkit-scrollbar-button {
 	display: none;
 }
@@ -90,7 +99,6 @@ body {
 }
 
 .sidebar-title {
-	font-weight: 600;
 	font-size: 20px;
 	padding: 10px 0;
 }
@@ -98,8 +106,8 @@ body {
 .menu-group {
 	margin-bottom: 20px;
 	background: rgba(4, 4, 4, 0.6);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
 	border-radius: 12px;
 	overflow: hidden;
 }
@@ -187,7 +195,6 @@ body {
 }
 
 .menu-title {
-	font-weight: 500;
 	font-size: 15px;
 	margin-bottom: 2px;
 }
@@ -285,13 +292,14 @@ input:checked+.slider:before {
 
 .content-title {
 	font-size: 24px;
-	font-weight: 600;
+	margin-left: 15px;
 	margin-bottom: 10px;
 }
 
 .content-subtitle {
 	color: #aaa;
 	font-size: 14px;
+	margin-left: 15px;
 }
 
 .orders-table {
@@ -452,28 +460,6 @@ input:checked+.slider:before {
 	color: #ea4335;
 }
 
-.chart-container {
-	background: rgba(40, 40, 40, 0.6);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	border-radius: 16px;
-	padding: 24px;
-	margin-top: 20px;
-}
-
-.chart-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 20px;
-}
-
-.chart-header h3 {
-	font-size: 18px;
-	font-weight: 600;
-	color: #fff;
-}
-
 .filter-select {
 	background: rgba(50, 50, 50, 0.6);
 	border: none;
@@ -505,6 +491,7 @@ option {
 	transform: translateX(-50%);
 	background: rgba(30, 30, 30, 0.95);
 	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
 	border: none;
 	border-radius: 8px;
 	padding: 12px;

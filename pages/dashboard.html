@@ -65,7 +65,9 @@
 	}
 
 	.dashboard-card {
-		background: rgba(40, 40, 40, 0.6);
+		background: rgba(255, 255, 255, 0.05);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
 		border-radius: 12px;
 		padding: 20px;
 	}
@@ -94,6 +96,27 @@
 		color: #ea4335;
 	}
 
+	.chart-container {
+		background: rgba(255, 255, 255, 0.05);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border-radius: 16px;
+		padding: 24px;
+		margin-top: 20px;
+	}
+
+	.chart-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 20px;
+	}
+
+	.chart-header h3 {
+		font-size: 18px;
+		font-weight: 600;
+		color: #fff;
+	}
 
 	#ordersChart {
 		width: 100% !important;

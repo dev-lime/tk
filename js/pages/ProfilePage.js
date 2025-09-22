@@ -33,15 +33,13 @@ class ProfilePage extends BasePage {
 
 	displayProfileData(user) {
 		// Basic info
-		document.getElementById('profileFullName').textContent =
-			`${user.first_name} ${user.last_name}`;
 		document.getElementById('profileUsername').textContent = `@${user.username}`;
 
 		// Roles
 		const rolesElement = document.getElementById('profileRoles');
 		if (user.roles && user.roles.length > 0) {
 			rolesElement.innerHTML = user.roles.map(role =>
-				`<span class="role-tag">${role}</span>`
+				`${role} `
 			).join('');
 		}
 
