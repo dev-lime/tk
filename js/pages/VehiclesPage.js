@@ -15,20 +15,18 @@ class VehiclesPage extends TablePage {
                 </div>
             </div>
 
-            <div class="filters-section">
-                <div class="filter-group">
-                    <input type="text" id="searchVehicles" placeholder="Search vehicles..." class="filter-input">
-                    <select id="statusFilter" class="filter-select">
-                        <option value="">All Statuses</option>
-                        <option value="available">Available</option>
-                        <option value="in_service">In Service</option>
-                        <option value="maintenance">Maintenance</option>
-                        <option value="unavailable">Unavailable</option>
-                    </select>
-                    <button class="filter-btn">Apply Filters</button>
-                    <button class="reset-filters">Reset</button>
-                </div>
-            </div>
+			<div class="filter-group">
+				<select id="statusFilter" class="filter-select">
+					<option value="">All Statuses</option>
+					<option value="available">Available</option>
+					<option value="in_service">In Service</option>
+					<option value="maintenance">Maintenance</option>
+					<option value="unavailable">Unavailable</option>
+				</select>
+				<input type="text" id="searchVehicles" placeholder="Search vehicles..." class="filter-input">
+				<button class="reset-filters">Reset</button>
+				<button class="filter-btn">Apply Filters</button>
+			</div>
 
             <div id="vehiclesTableContainer"></div>
             <div id="paginationContainer"></div>
@@ -44,8 +42,7 @@ class VehiclesPage extends TablePage {
 				...this.filters
 			});
 
-			const response = await fetch(`api/get_vehicles.php?${params}`);
-			const data = await response.json();
+			const data = await this.apiCall(`api/get_vehicles.php?${params}`);
 
 			if (data.status === 'success') {
 				this.renderVehiclesTable(data.vehicles);
@@ -80,7 +77,7 @@ class VehiclesPage extends TablePage {
                 <td>${vehicle.vehicle_id}</td>
                 <td>${vehicle.plate_number}</td>
                 <td>${vehicle.model}</td>
-                <td>${vehicle.capacity_kg}</td>
+                <td>${vehicle.capacity_kg} kg</td>
                 <td><span class="status-badge ${statusClass}">${vehicle.status}</span></td>
                 <td class="actions-cell">
                     <button class="btn-icon" onclick="vehiclesPage.editVehicle(${vehicle.vehicle_id})" title="Edit">
@@ -115,6 +112,35 @@ class VehiclesPage extends TablePage {
 		this.currentPage = 1;
 		this.loadData();
 	}
+
+	openCreateModal() {
+		this.showSuccess('Create vehicle functionality will be implemented soon!');
+	}
+
+	editVehicle(vehicleId) {
+		this.showSuccess(`Edit vehicle ${vehicleId} functionality will be implemented soon!`);
+	}
+
+	async deleteVehicle(vehicleId) {
+		if (!confirm('Are you sure you want to delete this vehicle?')) return;
+
+		try {
+			const data = await this.apiCall('api/delete_vehicle.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ vehicle_id: vehicleId })
+			});
+
+			if (data.status === 'success') {
+				this.showSuccess('Vehicle deleted successfully');
+				this.loadData();
+			} else {
+				throw new Error(data.message);
+			}
+		} catch (error) {
+			this.showError('Failed to delete vehicle: ' + error.message);
+		}
+	}
 }
 
-const vehiclesPage = new VehiclesPage();
+window.vehiclesPage = new VehiclesPage();

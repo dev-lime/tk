@@ -15,23 +15,21 @@ class OrdersPage extends TablePage {
                 </div>
             </div>
 
-            <div class="filters-section">
-                <div class="filter-group">
-                    <input type="text" id="searchOrders" placeholder="Search orders..." class="filter-input">
-                    <select id="statusFilter" class="filter-select">
-                        <option value="">All Statuses</option>
-                        <option value="pending">Pending</option>
-                        <option value="assigned">Assigned</option>
-                        <option value="in_transit">In Transit</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="cancelled">Cancelled</option>
-                    </select>
-                    <input type="date" id="dateFromFilter" class="filter-input" placeholder="From Date">
-                    <input type="date" id="dateToFilter" class="filter-input" placeholder="To Date">
-                    <button class="filter-btn">Apply Filters</button>
-                    <button class="reset-filters">Reset</button>
-                </div>
-            </div>
+			<div class="filter-group">
+				<select id="statusFilter" class="filter-select">
+					<option value="">All Statuses</option>
+					<option value="pending">Pending</option>
+					<option value="assigned">Assigned</option>
+					<option value="in_transit">In Transit</option>
+					<option value="delivered">Delivered</option>
+					<option value="cancelled">Cancelled</option>
+				</select>
+				<input type="text" id="searchOrders" placeholder="Search orders..." class="filter-input">
+				<input type="date" id="dateFromFilter" class="filter-input" placeholder="From Date">
+				<input type="date" id="dateToFilter" class="filter-input" placeholder="To Date">
+				<button class="reset-filters">Reset</button>
+				<button class="filter-btn">Apply Filters</button>
+			</div>
 
             <div id="ordersTableContainer"></div>
             <div id="paginationContainer"></div>
@@ -47,8 +45,7 @@ class OrdersPage extends TablePage {
 				...this.filters
 			});
 
-			const response = await fetch(`api/get_orders.php?${params}`);
-			const data = await response.json();
+			const data = await this.apiCall(`api/get_orders.php?${params}`);
 
 			if (data.status === 'success') {
 				this.renderOrdersTable(data.orders);
@@ -130,6 +127,40 @@ class OrdersPage extends TablePage {
 		this.currentPage = 1;
 		this.loadData();
 	}
+
+	openCreateModal() {
+		this.showSuccess('Create order functionality will be implemented soon!');
+	}
+
+	viewOrder(orderId) {
+		this.showSuccess(`View order ${orderId} functionality will be implemented soon!`);
+	}
+
+	editOrder(orderId) {
+		this.showSuccess(`Edit order ${orderId} functionality will be implemented soon!`);
+	}
+
+	async cancelOrder(orderId) {
+		if (!confirm('Are you sure you want to cancel this order?')) return;
+
+		try {
+			const data = await this.apiCall('api/cancel_order.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ order_id: orderId })
+			});
+
+			if (data.status === 'success') {
+				this.showSuccess('Order cancelled successfully');
+				this.loadData();
+			} else {
+				throw new Error(data.message);
+			}
+		} catch (error) {
+			this.showError('Failed to cancel order: ' + error.message);
+		}
+	}
 }
 
-const ordersPage = new OrdersPage();
+// Создаем глобальный экземпляр
+window.ordersPage = new OrdersPage();

@@ -16,10 +16,11 @@ class TablePage extends BasePage {
 
 	async loadData() {
 		// To be implemented in child classes
+		throw new Error('loadData method must be implemented in child class');
 	}
 
 	initEventHandlers() {
-		// Pagination handlers
+		// Обработчики событий для пагинации, сортировки и фильтрации
 		document.addEventListener('click', (e) => {
 			if (e.target.classList.contains('page-btn')) {
 				this.handlePagination(parseInt(e.target.dataset.page));
@@ -37,6 +38,13 @@ class TablePage extends BasePage {
 				this.resetFilters();
 			}
 		});
+
+		// Обработчики для клавиши Enter в фильтрах
+		document.addEventListener('keypress', (e) => {
+			if (e.target.classList.contains('filter-input') && e.key === 'Enter') {
+				this.handleFilter();
+			}
+		});
 	}
 
 	handlePagination(page) {
@@ -51,21 +59,35 @@ class TablePage extends BasePage {
 			this.sortField = field;
 			this.sortDirection = 'asc';
 		}
+		this.currentPage = 1;
 		this.loadData();
 	}
 
 	handleFilter() {
 		// To be implemented in child classes
+		console.log('Filter handling should be implemented in child class');
 	}
 
 	resetFilters() {
 		this.filters = {};
 		this.currentPage = 1;
+
+		// Сброс значений полей фильтрации
+		const filterInputs = document.querySelectorAll('.filter-input, .filter-select');
+		filterInputs.forEach(input => {
+			if (input.tagName === 'SELECT') {
+				input.selectedIndex = 0;
+			} else {
+				input.value = '';
+			}
+		});
+
 		this.loadData();
 	}
 
 	renderPagination(totalItems) {
 		const totalPages = Math.ceil(totalItems / this.itemsPerPage);
+		if (totalPages <= 1) return '';
 
 		return `
             <div class="pagination">
@@ -77,6 +99,7 @@ class TablePage extends BasePage {
                 
                 ${Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
 			const page = i + 1;
+			if (page > totalPages) return '';
 			return `
                         <button class="page-btn ${this.currentPage === page ? 'active' : ''}" 
                                 data-page="${page}">
@@ -94,13 +117,22 @@ class TablePage extends BasePage {
                 </button>
                 
                 <span class="pagination-info">
-                    ${((this.currentPage - 1) * this.itemsPerPage) + 1}-${Math.min(this.currentPage * this.itemsPerPage, totalItems)} of ${totalItems}
+                    Showing ${((this.currentPage - 1) * this.itemsPerPage) + 1}-${Math.min(this.currentPage * this.itemsPerPage, totalItems)} of ${totalItems}
                 </span>
             </div>
         `;
 	}
 
 	renderTable(headers, data) {
+		if (!data || data.length === 0) {
+			return `
+                <div class="no-data">
+                    <i class="fas fa-inbox"></i>
+                    <p>No data available</p>
+                </div>
+            `;
+		}
+
 		return `
             <div class="table-container">
                 <table class="data-table">
@@ -127,6 +159,42 @@ class TablePage extends BasePage {
 
 	renderTableRow(row) {
 		// To be implemented in child classes
-		return '<tr></tr>';
+		return '<tr><td colspan="8">Implement renderTableRow in child class</td></tr>';
+	}
+
+	async apiCall(url, options = {}) {
+		try {
+			this.showLoading();
+			const response = await fetch(url, options);
+
+			// Check if response is JSON
+			const contentType = response.headers.get('content-type');
+			if (!contentType || !contentType.includes('application/json')) {
+				const text = await response.text();
+				throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}`);
+			}
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				throw new Error(data.message || `HTTP error! status: ${response.status}`);
+			}
+
+			this.hideLoading();
+			return data;
+		} catch (error) {
+			this.hideLoading();
+
+			// More specific error messages
+			if (error.message.includes('non-JSON')) {
+				this.showError('Server error: Invalid response format');
+			} else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+				this.showError('Network error: Cannot connect to server');
+			} else {
+				this.showError(error.message);
+			}
+
+			throw error;
+		}
 	}
 }
