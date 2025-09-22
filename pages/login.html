@@ -1,41 +1,150 @@
 <div class="login-page">
 	<div class="login-container">
-		<div class="login-card">
-			<div class="login-logo">
-				<h1>Transport Company</h1>
-				<p>Log in to your account</p>
+		<div class="login-tabs">
+			<button class="tab-btn active" data-tab="login">Login</button>
+			<button class="tab-btn" data-tab="register">Register</button>
+		</div>
+
+		<div class="tab-content">
+			<!-- Login Form -->
+			<div class="tab-pane active" id="login-tab">
+				<div class="login-card">
+					<div class="login-logo">
+						<h1>Transport Company</h1>
+						<p>Log in to your account</p>
+					</div>
+
+					<form id="loginForm">
+						<div class="form-group">
+							<label for="login-username">Username</label>
+							<div class="input-with-icon">
+								<i class="fas fa-user"></i>
+								<input type="text" id="login-username" placeholder="Enter your username" required>
+							</div>
+							<div class="error-message" id="loginUsernameError">Please enter your username</div>
+						</div>
+
+						<div class="form-group">
+							<label for="login-password">Password</label>
+							<div class="input-with-icon">
+								<i class="fas fa-lock"></i>
+								<input type="password" id="login-password" placeholder="Enter your password" required>
+								<i class="fas fa-eye toggle-password"></i>
+							</div>
+							<div class="error-message" id="loginPasswordError">The password must contain at least 6
+								characters</div>
+						</div>
+
+						<button type="submit" class="login-btn">
+							<span class="btn-text">Login</span>
+							<span class="btn-loading" style="display: none;">
+								<i class="fas fa-spinner fa-spin"></i> Login...
+							</span>
+						</button>
+					</form>
+
+					<div class="login-footer">
+						<p>No account? <a href="#" onclick="switchToRegister()">Register now</a></p>
+					</div>
+				</div>
 			</div>
 
-			<form id="loginForm">
-				<div class="form-group">
-					<label for="email">Username</label>
-					<div class="input-with-icon">
-						<i class="fas fa-user"></i>
-						<input type="text" id="username" placeholder="Enter your username" required>
+			<!-- Register Form -->
+			<div class="tab-pane" id="register-tab">
+				<div class="login-card">
+					<div class="login-logo">
+						<h1>Transport Company</h1>
+						<p>Create client account</p>
 					</div>
-					<div class="error-message" id="usernameError">Please enter your username</div>
-				</div>
 
-				<div class="form-group">
-					<label for="password">Password</label>
-					<div class="input-with-icon">
-						<i class="fas fa-lock"></i>
-						<input type="password" id="password" placeholder="Enter your пароль" required>
-						<i class="fas fa-eye toggle-password"></i>
+					<form id="registerForm">
+						<div class="form-row">
+							<div class="form-group">
+								<label for="reg-lastname">Last Name *</label>
+								<input type="text" id="reg-lastname" placeholder="Enter last name" required>
+								<div class="error-message" id="regLastnameError"></div>
+							</div>
+							<div class="form-group">
+								<label for="reg-firstname">First Name *</label>
+								<input type="text" id="reg-firstname" placeholder="Enter first name" required>
+								<div class="error-message" id="regFirstnameError"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="reg-middlename">Middle Name</label>
+							<input type="text" id="reg-middlename" placeholder="Enter middle name">
+						</div>
+
+						<div class="form-group">
+							<label for="reg-username">Username *</label>
+							<div class="input-with-icon">
+								<i class="fas fa-user"></i>
+								<input type="text" id="reg-username" placeholder="Choose username" required>
+							</div>
+							<div class="error-message" id="regUsernameError"></div>
+						</div>
+
+						<div class="form-group">
+							<label for="reg-password">Password *</label>
+							<div class="input-with-icon">
+								<i class="fas fa-lock"></i>
+								<input type="password" id="reg-password" placeholder="At least 6 characters" required>
+								<i class="fas fa-eye toggle-password"></i>
+							</div>
+							<div class="error-message" id="regPasswordError"></div>
+						</div>
+
+						<div class="form-group">
+							<label for="reg-confirm-password">Confirm Password *</label>
+							<div class="input-with-icon">
+								<i class="fas fa-lock"></i>
+								<input type="password" id="reg-confirm-password" placeholder="Confirm password"
+									required>
+							</div>
+							<div class="error-message" id="regConfirmPasswordError"></div>
+						</div>
+
+						<div class="form-group">
+							<label for="reg-email">Email</label>
+							<div class="input-with-icon">
+								<i class="fas fa-envelope"></i>
+								<input type="email" id="reg-email" placeholder="email@example.com">
+							</div>
+							<div class="error-message" id="regEmailError"></div>
+						</div>
+
+						<div class="form-group">
+							<label for="reg-phone">Phone</label>
+							<div class="input-with-icon">
+								<i class="fas fa-phone"></i>
+								<input type="tel" id="reg-phone" placeholder="+1 (234) 567-8900">
+							</div>
+							<div class="error-message" id="regPhoneError"></div>
+						</div>
+
+						<div class="form-group">
+							<label for="reg-company">Company Name</label>
+							<input type="text" id="reg-company" placeholder="Your company name">
+						</div>
+
+						<div class="form-agreement">
+							<input type="checkbox" id="agreement" required>
+							<label for="agreement">I agree to terms and conditions</label>
+						</div>
+
+						<button type="submit" class="login-btn">
+							<span class="btn-text">Register</span>
+							<span class="btn-loading" style="display: none;">
+								<i class="fas fa-spinner fa-spin"></i> Registering...
+							</span>
+						</button>
+					</form>
+
+					<div class="login-footer">
+						<p>Already have an account? <a href="#" onclick="switchToLogin()">Login here</a></p>
 					</div>
-					<div class="error-message" id="passwordError">The password must contain at least 6 characters</div>
 				</div>
-
-				<button type="submit" class="login-btn">
-					<span class="btn-text">Login</span>
-					<span class="btn-loading" style="display: none;">
-						<i class="fas fa-spinner fa-spin"></i> Login...
-					</span>
-				</button>
-			</form>
-
-			<div class="login-footer">
-				<p>No account? <a href="#">Contact the administrator</a></p>
 			</div>
 		</div>
 	</div>
@@ -181,6 +290,73 @@
 	@media (max-width: 480px) {
 		.login-card {
 			padding: 30px 20px;
+		}
+	}
+
+	.login-tabs {
+		display: flex;
+		margin-bottom: 20px;
+		background: rgba(40, 40, 40, 0.6);
+		border-radius: 12px;
+		padding: 4px;
+	}
+
+	.tab-btn {
+		flex: 1;
+		padding: 12px;
+		border: none;
+		background: none;
+		color: #aaa;
+		cursor: pointer;
+		border-radius: 8px;
+		transition: all 0.3s ease;
+		font-weight: 500;
+	}
+
+	.tab-btn.active {
+		background: rgba(66, 133, 244, 0.2);
+		color: #4285f4;
+	}
+
+	.tab-pane {
+		display: none;
+	}
+
+	.tab-pane.active {
+		display: block;
+	}
+
+	.form-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 15px;
+	}
+
+	.form-agreement {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+		margin: 20px 0;
+		font-size: 14px;
+		color: #aaa;
+	}
+
+	.form-agreement input {
+		margin-top: 3px;
+	}
+
+	.form-agreement label {
+		cursor: pointer;
+		line-height: 1.4;
+	}
+
+	@media (max-width: 480px) {
+		.form-row {
+			grid-template-columns: 1fr;
+		}
+
+		.login-tabs {
+			flex-direction: column;
 		}
 	}
 </style>

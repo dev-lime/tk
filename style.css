@@ -651,6 +651,17 @@ option {
 	font-size: 12px;
 }
 
+.success-message {
+	background: rgba(52, 168, 83, 0.1);
+	border: 1px solid rgba(52, 168, 83, 0.3);
+	border-radius: 8px;
+	padding: 12px;
+	margin: 15px 0;
+	text-align: center;
+	color: #34a853 !important;
+	font-size: 14px;
+}
+
 @keyframes pulse {
 	0% {
 		opacity: 1;
