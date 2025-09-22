@@ -73,7 +73,7 @@
 </div>
 
 <button class="action-btn" onclick="app.logout()">
-	<span class="btn-text">Logout</span>
+	Logout
 </button>
 
 <style>
@@ -94,6 +94,7 @@
 	.detail-item {
 		background: rgba(255, 255, 255, 0.05);
 		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
 		padding: 16px;
 		border-radius: 8px;
 	}
@@ -113,13 +114,14 @@
 	}
 
 	.action-btn {
-		width: 80%;
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		width: auto;
 		margin: 20px auto;
-		padding: 12px 16px;
+		padding: 12px 64px;
 		border: none;
 		border-radius: 8px;
 		font-size: 14px;
-		font-weight: 500;
 		cursor: pointer;
 		display: flex;
 		align-items: center;

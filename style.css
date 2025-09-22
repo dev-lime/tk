@@ -35,7 +35,9 @@ h6 {
 
 ::-webkit-scrollbar-thumb {
 	width: 2px;
-	background-color: #ffffff10;
+	background-color: rgba(255, 255, 255, 0.05);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
 	border-radius: 8px;
 }
 
@@ -105,7 +107,7 @@ h6 {
 
 .menu-group {
 	margin-bottom: 20px;
-	background: rgba(4, 4, 4, 0.6);
+	background-color: transparent;
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
 	border-radius: 12px;
@@ -300,66 +302,6 @@ input:checked+.slider:before {
 	color: #aaa;
 	font-size: 14px;
 	margin-left: 15px;
-}
-
-.orders-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-top: 20px;
-}
-
-.orders-table th {
-	text-align: left;
-	padding: 12px 15px;
-	font-weight: 500;
-	color: #aaa;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.orders-table td {
-	padding: 12px 15px;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.orders-table tbody tr {
-	transition: background 0.3s ease;
-}
-
-.orders-table tbody tr:hover {
-	background: rgba(255, 255, 255, 0.05);
-}
-
-.status {
-	padding: 4px 8px;
-	border-radius: 20px;
-	font-size: 12px;
-	font-weight: 500;
-	display: inline-block;
-}
-
-.status-in-transit {
-	background: rgba(66, 133, 244, 0.2);
-	color: #4285f4;
-}
-
-.status-assigned {
-	background: rgba(251, 188, 5, 0.2);
-	color: #fbbc05;
-}
-
-.status-waiting {
-	background: rgba(234, 67, 53, 0.2);
-	color: #ea4335;
-}
-
-.status-delivered {
-	background: rgba(52, 168, 83, 0.2);
-	color: #34a853;
-}
-
-.status-cancelled {
-	background: rgba(120, 120, 120, 0.2);
-	color: #aaaaaa;
 }
 
 .action-btn {
@@ -611,17 +553,6 @@ option {
 
 	.main-content {
 		height: auto;
-	}
-}
-
-@media (max-width: 768px) {
-	.orders-table {
-		display: block;
-		overflow-x: auto;
-	}
-
-	.vehicle-grid {
-		grid-template-columns: 1fr;
 	}
 }
 
