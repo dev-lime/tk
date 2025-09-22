@@ -11,7 +11,7 @@ class TransportCompanyApp {
 			'clients': BasePage,
 			'drivers': BasePage,
 			'dispatchers': BasePage,
-			'profile': BasePage,
+			'profile': ProfilePage,
 			'notifications': BasePage
 		};
 
