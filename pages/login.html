@@ -58,24 +58,6 @@
 					</div>
 
 					<form id="registerForm">
-						<div class="form-row">
-							<div class="form-group">
-								<label for="reg-lastname">Last Name *</label>
-								<input type="text" id="reg-lastname" placeholder="Enter last name" required>
-								<div class="error-message" id="regLastnameError"></div>
-							</div>
-							<div class="form-group">
-								<label for="reg-firstname">First Name *</label>
-								<input type="text" id="reg-firstname" placeholder="Enter first name" required>
-								<div class="error-message" id="regFirstnameError"></div>
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="reg-middlename">Middle Name</label>
-							<input type="text" id="reg-middlename" placeholder="Enter middle name">
-						</div>
-
 						<div class="form-group">
 							<label for="reg-username">Username *</label>
 							<div class="input-with-icon">
@@ -83,6 +65,23 @@
 								<input type="text" id="reg-username" placeholder="Choose username" required>
 							</div>
 							<div class="error-message" id="regUsernameError"></div>
+						</div>
+
+						<div class="form-group">
+							<label for="reg-firstname">First Name *</label>
+							<input type="text" id="reg-firstname" placeholder="Enter first name" required>
+							<div class="error-message" id="regFirstnameError"></div>
+						</div>
+
+						<div class="form-group">
+							<label for="reg-lastname">Last Name *</label>
+							<input type="text" id="reg-lastname" placeholder="Enter last name" required>
+							<div class="error-message" id="regLastnameError"></div>
+						</div>
+
+						<div class="form-group">
+							<label for="reg-middlename">Middle Name</label>
+							<input type="text" id="reg-middlename" placeholder="Enter middle name">
 						</div>
 
 						<div class="form-group">
@@ -126,11 +125,6 @@
 						<div class="form-group">
 							<label for="reg-company">Company Name</label>
 							<input type="text" id="reg-company" placeholder="Your company name">
-						</div>
-
-						<div class="form-agreement">
-							<input type="checkbox" id="agreement" required>
-							<label for="agreement">I agree to terms and conditions</label>
 						</div>
 
 						<button type="submit" class="login-btn">
@@ -216,20 +210,7 @@
 	}
 
 	.input-with-icon input {
-		width: 100%;
-		padding: 12px 45px 12px 45px;
-		background: rgba(50, 50, 50, 0.6);
-		border: 1px solid rgba(50, 50, 50, 0.6);
-		border-radius: 8px;
-		color: #fff;
-		font-size: 14px;
-		transition: all 0.3s ease;
-	}
-
-	.input-with-icon input:focus {
-		outline: none;
-		border-color: #4285f4;
-		background: rgba(50, 50, 50, 0.8);
+		padding: 12px 45px;
 	}
 
 	.error-message {
@@ -287,12 +268,6 @@
 		margin-right: 8px;
 	}
 
-	@media (max-width: 480px) {
-		.login-card {
-			padding: 30px 20px;
-		}
-	}
-
 	.login-tabs {
 		display: flex;
 		margin-bottom: 20px;
@@ -332,25 +307,11 @@
 		gap: 15px;
 	}
 
-	.form-agreement {
-		display: flex;
-		align-items: flex-start;
-		gap: 8px;
-		margin: 20px 0;
-		font-size: 14px;
-		color: #aaa;
-	}
-
-	.form-agreement input {
-		margin-top: 3px;
-	}
-
-	.form-agreement label {
-		cursor: pointer;
-		line-height: 1.4;
-	}
-
 	@media (max-width: 480px) {
+		.login-card {
+			padding: 30px 20px;
+		}
+
 		.form-row {
 			grid-template-columns: 1fr;
 		}
