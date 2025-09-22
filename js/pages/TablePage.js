@@ -20,7 +20,6 @@ class TablePage extends BasePage {
 	}
 
 	initEventHandlers() {
-		// Обработчики событий для пагинации, сортировки и фильтрации
 		document.addEventListener('click', (e) => {
 			if (e.target.classList.contains('page-btn')) {
 				this.handlePagination(parseInt(e.target.dataset.page));
@@ -39,12 +38,19 @@ class TablePage extends BasePage {
 			}
 		});
 
-		// Обработчики для клавиши Enter в фильтрах
 		document.addEventListener('keypress', (e) => {
 			if (e.target.classList.contains('filter-input') && e.key === 'Enter') {
 				this.handleFilter();
 			}
 		});
+	}
+
+	getElement(id) {
+		const element = document.getElementById(id);
+		if (!element) {
+			console.warn(`Element with id '${id}' not found`);
+		}
+		return element;
 	}
 
 	handlePagination(page) {
@@ -72,7 +78,6 @@ class TablePage extends BasePage {
 		this.filters = {};
 		this.currentPage = 1;
 
-		// Сброс значений полей фильтрации
 		const filterInputs = document.querySelectorAll('.filter-input, .filter-select');
 		filterInputs.forEach(input => {
 			if (input.tagName === 'SELECT') {
@@ -126,9 +131,9 @@ class TablePage extends BasePage {
 	renderTable(headers, data) {
 		if (!data || data.length === 0) {
 			return `
-                <div class="no-data">
+                <div class="no-data" style="display: flex; justify-content: center; margin: 36px">
                     <i class="fas fa-inbox"></i>
-                    <p>No data available</p>
+                    <p style="padding: 0px 16px">No data available</p>
                 </div>
             `;
 		}
@@ -142,9 +147,9 @@ class TablePage extends BasePage {
                                 <th class="sort-header" data-field="${header.field}">
                                     ${header.label}
                                     ${this.sortField === header.field ?
-				`<i class="fas fa-${this.sortDirection === 'asc' ? 'arrow-up' : 'arrow-down'}"></i>` :
-				'<i class="fas fa-arrows-alt-v"></i>'
-			}
+										`<i class="fas fa-${this.sortDirection === 'asc' ? 'arrow-up' : 'arrow-down'}"></i>` :
+										'<i class="fas fa-arrows-up-down"></i>'
+									}
                                 </th>
                             `).join('')}
                         </tr>

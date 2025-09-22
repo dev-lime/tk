@@ -42,10 +42,12 @@ class TransportCompanyApp {
 		this.currentPage = pageName;
 
 		const content = await this.currentPageInstance.load();
-		document.getElementById('content-container').innerHTML = content;
-
-		await this.currentPageInstance.init();
-		this.updateMenuActiveState(pageName);
+		const contentContainer = document.getElementById('content-container');
+		if (contentContainer) {
+			contentContainer.innerHTML = content;
+			await this.currentPageInstance.init();
+			this.updateMenuActiveState(pageName);
+		}
 	}
 
 	updateMenuActiveState(pageName) {

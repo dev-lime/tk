@@ -5,22 +5,22 @@
 
 <div class="dashboard-grid">
 	<div class="dashboard-card">
-		<div class="card-title">Total Orders</div>
+		<div class="card-title">Total Orders (mock)</div>
 		<div class="card-value">142</div>
 		<div class="card-trend positive">+12% from last week</div>
 	</div>
 	<div class="dashboard-card">
-		<div class="card-title">Active Vehicles</div>
+		<div class="card-title">Active Vehicles (mock)</div>
 		<div class="card-value">24</div>
 		<div class="card-trend positive">+2 from yesterday</div>
 	</div>
 	<div class="dashboard-card">
-		<div class="card-title">Pending Orders</div>
+		<div class="card-title">Pending Orders (mock)</div>
 		<div class="card-value">8</div>
 		<div class="card-trend negative">-3 from yesterday</div>
 	</div>
 	<div class="dashboard-card">
-		<div class="card-title">Revenue</div>
+		<div class="card-title">Revenue (mock)</div>
 		<div class="card-value">$12,458</div>
 		<div class="card-trend positive">+8% from last month</div>
 	</div>
@@ -44,7 +44,7 @@
 
 <div class="chart-container">
 	<div class="chart-header">
-		<h3>Orders Statistics</h3>
+		<h3>Orders Statistics (mock)</h3>
 		<div class="chart-filter">
 			<select class="filter-select">
 				<option value="week" selected>This Week</option>
@@ -112,12 +112,6 @@
 		margin-bottom: 20px;
 	}
 
-	.chart-header h3 {
-		font-size: 18px;
-		font-weight: 600;
-		color: #fff;
-	}
-
 	#ordersChart {
 		width: 100% !important;
 		height: 300px !important;
@@ -174,6 +168,81 @@
 
 	.db-info-tooltip:hover i {
 		color: #4285f4;
+	}
+
+
+	.tooltip-content {
+		position: absolute;
+		bottom: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		background: rgba(30, 30, 30, 1);
+		border: none;
+		border-radius: 12px;
+		padding: 12px;
+		min-width: 200px;
+		opacity: 0;
+		visibility: hidden;
+		transition: all 0.3s ease;
+		z-index: 1000;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+	}
+
+	.tooltip-content::after {
+		content: '';
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		border: none;
+	}
+
+	.db-info-tooltip:hover .tooltip-content {
+		opacity: 1;
+		visibility: visible;
+		bottom: calc(100% + 10px);
+	}
+
+	.tooltip-content div {
+		font-size: 12px;
+		color: #aaa;
+		margin-bottom: 4px;
+		line-height: 1.4;
+	}
+
+	.tooltip-content div:last-child {
+		margin-bottom: 0;
+	}
+
+	.tooltip-content .success {
+		color: #34a853;
+	}
+
+	.tooltip-content .error {
+		color: #ea4335;
+	}
+
+	.refresh-btn {
+		background: rgba(66, 133, 244, 0.2);
+		color: #4285f4;
+		border: none;
+		border-radius: 12px;
+		padding: 8px;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		width: 32px;
+		height: 32px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.refresh-btn:hover {
+		background: rgba(66, 133, 244, 0.3);
+	}
+
+	.refresh-btn i {
+		font-size: 12px;
 	}
 
 	@media (max-width: 768px) {
