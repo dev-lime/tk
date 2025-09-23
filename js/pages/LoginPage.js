@@ -243,13 +243,6 @@ class LoginPage extends BasePage {
 			isValid = false;
 		}
 
-		// Agreement check
-		const agreement = document.getElementById('agreement');
-		if (!agreement.checked) {
-			this.showError('Please agree to terms and conditions', 'register');
-			isValid = false;
-		}
-
 		return isValid;
 	}
 
