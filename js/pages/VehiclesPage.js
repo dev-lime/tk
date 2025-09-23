@@ -8,11 +8,6 @@ class VehiclesPage extends TablePage {
 		return `
             <div class="content-header">
                 <h1 class="content-title">Vehicles Management</h1>
-                <div class="header-actions">
-                    <button class="action-btn" onclick="vehiclesPage.openCreateModal()">
-                        <i class="fas fa-plus"></i> Add Vehicle
-                    </button>
-                </div>
             </div>
 
 			<div class="filter-group">
@@ -30,6 +25,11 @@ class VehiclesPage extends TablePage {
 
             <div id="vehiclesTableContainer"></div>
             <div id="paginationContainer"></div>
+			
+			<!-- ДОЛЖНО БЫТЬ ВНУТРИ PAGINATIONCONTAINER !!! --!>
+			<button class="page-btn" onclick="vehiclesPage.openCreateModal()">
+				<i class="fas fa-plus"></i> Add Vehicle
+			</button>
         `;
 	}
 

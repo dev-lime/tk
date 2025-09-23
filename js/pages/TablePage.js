@@ -96,6 +96,10 @@ class TablePage extends BasePage {
 
 		return `
             <div class="pagination">
+                <span class="pagination-info">
+                    Showing ${((this.currentPage - 1) * this.itemsPerPage) + 1}-${Math.min(this.currentPage * this.itemsPerPage, totalItems)} of ${totalItems}
+                </span>
+
                 <button class="page-btn ${this.currentPage === 1 ? 'disabled' : ''}" 
                         ${this.currentPage === 1 ? 'disabled' : ''}
                         data-page="${this.currentPage - 1}">
@@ -120,10 +124,6 @@ class TablePage extends BasePage {
                         data-page="${this.currentPage + 1}">
                     <i class="fas fa-chevron-right"></i>
                 </button>
-                
-                <span class="pagination-info">
-                    Showing ${((this.currentPage - 1) * this.itemsPerPage) + 1}-${Math.min(this.currentPage * this.itemsPerPage, totalItems)} of ${totalItems}
-                </span>
             </div>
         `;
 	}
@@ -147,9 +147,9 @@ class TablePage extends BasePage {
                                 <th class="sort-header" data-field="${header.field}">
                                     ${header.label}
                                     ${this.sortField === header.field ?
-										`<i class="fas fa-${this.sortDirection === 'asc' ? 'arrow-up' : 'arrow-down'}"></i>` :
-										'<i class="fas fa-arrows-up-down"></i>'
-									}
+				`<i class="fas fa-${this.sortDirection === 'asc' ? 'arrow-up' : 'arrow-down'}"></i>` :
+				'<i class="fas fa-arrows-up-down"></i>'
+			}
                                 </th>
                             `).join('')}
                         </tr>

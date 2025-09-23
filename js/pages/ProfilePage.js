@@ -89,15 +89,6 @@ class ProfilePage extends BasePage {
             `;
 		}
 
-		if (specializedInfo.dispatcher) {
-			specializedHTML += `
-                <div class="detail-item">
-                    <label class="detail-label">Position</label>
-                    <p class="detail-value">Dispatcher</p>
-                </div>
-            `;
-		}
-
 		if (specializedHTML) {
 			specializedSection.innerHTML = specializedHTML;
 			specializedSection.style.display = 'block';

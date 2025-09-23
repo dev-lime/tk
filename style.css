@@ -563,13 +563,13 @@ option {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	justify-content: center;
+	justify-content: right;
 	margin: 20px 0;
 }
 
 .page-btn {
 	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: none;
 	color: #ccc;
 	padding: 8px 12px;
 	border-radius: 12px;
@@ -583,7 +583,6 @@ option {
 
 .page-btn.active {
 	background: rgba(66, 133, 244, 0.3);
-	border-color: rgba(66, 133, 244, 0.5);
 	color: #8ab4f8;
 }
 
@@ -595,19 +594,12 @@ option {
 .pagination-info {
 	color: #666;
 	font-size: 14px;
-	margin-left: 16px;
+	margin-right: 16px;
 }
 
 .pagination-ellipsis {
 	color: #666;
 	padding: 0 8px;
-}
-
-/* Header Actions */
-.header-actions {
-	display: flex;
-	gap: 12px;
-	align-items: center;
 }
 
 /* Actions Cell */
@@ -636,10 +628,5 @@ option {
 	.data-table th,
 	.data-table td {
 		padding: 12px 8px;
-	}
-
-	.header-actions {
-		flex-direction: column;
-		align-items: stretch;
 	}
 }

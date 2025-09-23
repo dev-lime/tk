@@ -8,11 +8,6 @@ class OrdersPage extends TablePage {
 		return `
             <div class="content-header">
                 <h1 class="content-title">Orders Management</h1>
-                <div class="header-actions">
-                    <button class="action-btn" onclick="ordersPage.openCreateModal()">
-                        <i class="fas fa-plus"></i> Create Order
-                    </button>
-                </div>
             </div>
 
 			<div class="filter-group">
@@ -33,6 +28,11 @@ class OrdersPage extends TablePage {
 
             <div id="ordersTableContainer"></div>
             <div id="paginationContainer"></div>
+			
+			<!-- ДОЛЖНО БЫТЬ ВНУТРИ PAGINATIONCONTAINER !!! --!>
+			<button class="page-btn" onclick="ordersPage.openCreateModal()">
+				<i class="fas fa-plus"></i> Create Order
+			</button>
         `;
 	}
 
