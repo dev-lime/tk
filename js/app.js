@@ -13,7 +13,7 @@ class TransportCompanyApp {
 			'drivers': BasePage,
 			'dispatchers': BasePage,
 			'profile': ProfilePage,
-			'notifications': BasePage
+			'notifications': NotificationsPage
 		};
 
 		this.init();
