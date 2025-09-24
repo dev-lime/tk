@@ -1,28 +1,20 @@
 <?php
+require_once '../config/database.php';
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-require_once '../config/database.php';
-
 try {
 	$con = getDBConnection();
-
 	$response = [
 		'status' => 'success',
 		'message' => 'Connection to the database has been successfully established',
-		'database' => [
-			'name' => 'tk',
-			'host' => 'localhost',
-			'port' => '5432',
-			'user' => 'postgres'
-		],
+		'database' => ['name' => 'tk', 'host' => 'localhost', 'port' => '5432', 'user' => 'postgres'],
 		'timestamp' => date('Y-m-d H:i:s')
 	];
-
 	pg_close($con);
-
 } catch (Exception $e) {
 	$response = [
 		'status' => 'error',

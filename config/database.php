@@ -1,10 +1,21 @@
 <?php
+function getDBConfig()
+{
+	return [
+		'host' => 'localhost',
+		'port' => '5432',
+		'dbname' => 'tk',
+		'user' => 'postgres',
+		'password' => '123'
+	];
+}
+
 function getDBConnection()
 {
-	$con = pg_connect('host=localhost port=5432 dbname=tk user=postgres password=123');
-	if (!$con) {
+	$config = getDBConfig();
+	$con = pg_connect("host={$config['host']} port={$config['port']} dbname={$config['dbname']} user={$config['user']} password={$config['password']}");
+	if (!$con)
 		throw new Exception("Database connection error");
-	}
 	return $con;
 }
 
