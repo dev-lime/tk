@@ -1,28 +1,28 @@
 <div class="content-header">
 	<h1 class="content-title">Dashboard</h1>
-	<p class="content-subtitle">Welcome back, Artem! Here's what's happening today.</p>
+	<p class="content-subtitle">Welcome back! Here's what's happening today.</p>
 </div>
 
 <div class="dashboard-grid">
 	<div class="dashboard-card">
-		<div class="card-title">Total Orders (mock)</div>
-		<div class="card-value">142</div>
-		<div class="card-trend positive">+12% from last week</div>
+		<div class="card-title">Total Orders</div>
+		<div class="card-value">0</div>
+		<div class="card-trend positive">Loading...</div>
 	</div>
 	<div class="dashboard-card">
-		<div class="card-title">Active Vehicles (mock)</div>
-		<div class="card-value">24</div>
-		<div class="card-trend positive">+2 from yesterday</div>
+		<div class="card-title">Active Vehicles</div>
+		<div class="card-value">0</div>
+		<div class="card-trend positive">Loading...</div>
 	</div>
 	<div class="dashboard-card">
-		<div class="card-title">Pending Orders (mock)</div>
-		<div class="card-value">8</div>
-		<div class="card-trend negative">-3 from yesterday</div>
+		<div class="card-title">Pending Orders</div>
+		<div class="card-value">0</div>
+		<div class="card-trend negative">Loading...</div>
 	</div>
 	<div class="dashboard-card">
-		<div class="card-title">Revenue (mock)</div>
-		<div class="card-value">$12,458</div>
-		<div class="card-trend positive">+8% from last month</div>
+		<div class="card-title">Revenue</div>
+		<div class="card-value">$0</div>
+		<div class="card-trend positive">Loading...</div>
 	</div>
 	<div class="dashboard-card">
 		<div class="card-title">Database Status</div>
@@ -35,7 +35,7 @@
 				<i class="fas fa-info-circle"></i>
 				<div class="tooltip-content" id="dbTooltipContent"></div>
 			</div>
-			<button class="refresh-btn" onclick="checkDatabaseStatus()">
+			<button class="refresh-btn" onclick="window.dashboardPage.checkDatabaseStatus()">
 				<i class="fas fa-sync-alt"></i>
 			</button>
 		</div>
@@ -44,7 +44,7 @@
 
 <div class="chart-container">
 	<div class="chart-header">
-		<h3>Orders Statistics (mock)</h3>
+		<h3>Orders Statistics</h3>
 		<div class="chart-filter">
 			<select class="filter-select">
 				<option value="week" selected>This Week</option>
@@ -169,7 +169,6 @@
 	.db-info-tooltip:hover i {
 		color: #4285f4;
 	}
-
 
 	.tooltip-content {
 		position: absolute;
