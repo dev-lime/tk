@@ -4,7 +4,7 @@ require_once '../config/database.php';
 
 try {
 	setupAPI();
-	$user = requireAuth(); // Любой авторизованный пользователь
+	$user = requireAuth();
 
 	$period = $_GET['period'] ?? 'week';
 	$con = getDBConnection();
@@ -20,7 +20,6 @@ try {
 
 	switch ($period) {
 		case 'month':
-			// Данные за последние 30 дней
 			$query = "
                 SELECT
                     DATE(created_at) as date,
@@ -35,7 +34,6 @@ try {
 			break;
 
 		case 'quarter':
-			// Данные за последние 90 дней по месяцам
 			$query = "
                 SELECT
                     TO_CHAR(created_at, 'YYYY-MM') as month,
@@ -51,7 +49,6 @@ try {
 
 		case 'week':
 		default:
-			// Данные за последние 7 дней
 			$query = "
                 SELECT
                     DATE(created_at) as date,
@@ -84,7 +81,6 @@ try {
 		$chartData['datasets']['cancelled'][] = (int) $row['cancelled_orders'];
 	}
 
-	// Если нет данных, возвращаем пустые массивы
 	if (empty($chartData['labels'])) {
 		$chartData = [
 			'labels' => [],

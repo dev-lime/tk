@@ -21,13 +21,10 @@ try {
 	$user = authenticateUser($username, $password);
 
 	if ($user) {
-		// Получаем роли пользователя
 		$roles = getUserRoles($user['user_id']);
 
-		// Получаем специализированную информацию
 		$specializedInfo = getUserSpecializedInfo($user['user_id']);
 
-		// Сохраняем в сессии
 		$_SESSION['user'] = [
 			'id' => $user['user_id'],
 			'username' => $user['username'],

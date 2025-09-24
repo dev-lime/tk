@@ -8,7 +8,6 @@ header('Access-Control-Allow-Headers: Content-Type');
 require_once '../config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' || $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-
 	// Handle preflight request
 	if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 		http_response_code(200);

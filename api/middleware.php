@@ -1,9 +1,8 @@
 <?php
 /**
- * API Middleware - общие функции для всех endpoints
+ * API Middleware - common functions for all endpoints
  */
 
-// Автозагрузка сессии и CORS headers
 function setupAPI()
 {
 	session_start();
@@ -20,7 +19,6 @@ function setupAPI()
 	}
 }
 
-// Проверка аутентификации пользователя
 function requireAuth($allowedRoles = [])
 {
 	if (!isset($_SESSION['user']) || !$_SESSION['user']['logged_in']) {
@@ -31,9 +29,21 @@ function requireAuth($allowedRoles = [])
 
 	if (!empty($allowedRoles)) {
 		$userRoles = $_SESSION['user']['roles'] ?? [];
-		if (!array_intersect($allowedRoles, $userRoles)) {
+		$hasAccess = false;
+
+		foreach ($allowedRoles as $role) {
+			if (in_array($role, $userRoles)) {
+				$hasAccess = true;
+				break;
+			}
+		}
+
+		if (!$hasAccess) {
 			http_response_code(403);
-			echo json_encode(['status' => 'error', 'message' => 'Insufficient permissions']);
+			echo json_encode([
+				'status' => 'error',
+				'message' => 'Access denied. Required roles: ' . implode(', ', $allowedRoles)
+			]);
 			exit();
 		}
 	}
@@ -41,7 +51,6 @@ function requireAuth($allowedRoles = [])
 	return $_SESSION['user'];
 }
 
-// Обработка ошибок API
 function handleAPIError(Exception $e, $code = 500)
 {
 	error_log("API Error: " . $e->getMessage());
@@ -52,13 +61,5 @@ function handleAPIError(Exception $e, $code = 500)
 		'timestamp' => date('Y-m-d H:i:s')
 	]);
 	exit();
-}
-
-// Проверка метода запроса
-function requireMethod($allowedMethods)
-{
-	if (!in_array($_SERVER['REQUEST_METHOD'], (array) $allowedMethods)) {
-		throw new Exception('Method not allowed', 405);
-	}
 }
 ?>

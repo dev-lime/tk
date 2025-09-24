@@ -4,11 +4,10 @@ require_once '../config/database.php';
 
 try {
 	setupAPI();
-	$user = requireAuth(); // Любой авторизованный пользователь
+	$user = requireAuth();
 
 	$con = getDBConnection();
 
-	// Все запросы в одном месте для производительности
 	$queries = [
 		'total_orders' => "SELECT COUNT(*) FROM orders",
 		'active_vehicles' => "SELECT COUNT(*) FROM vehicles WHERE status IN ('available', 'in_service')",
@@ -22,7 +21,6 @@ try {
 		$stats[$key] = pg_fetch_result($result, 0, 0) ?: 0;
 	}
 
-	// Примерные тренды (можно вынести в отдельную логику)
 	$stats['trends'] = [
 		'orders' => 12.5,
 		'vehicles' => 2,
