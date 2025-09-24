@@ -1,69 +1,62 @@
 <?php
-session_start();
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
+require_once 'middleware.php';
 require_once '../config/database.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	try {
-		$input = json_decode(file_get_contents('php://input'), true);
+try {
+	setupAPI();
 
-		if (!isset($input['username']) || !isset($input['password'])) {
-			throw new Exception("Username and password are required");
-		}
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		throw new Exception('Invalid request method', 405);
+	}
 
-		$username = trim($input['username']);
-		$password = trim($input['password']);
+	$input = json_decode(file_get_contents('php://input'), true);
 
-		$user = authenticateUser($username, $password);
+	if (!isset($input['username']) || !isset($input['password'])) {
+		throw new Exception("Username and password are required");
+	}
 
-		if ($user) {
-			// Getting user roles
-			$roles = getUserRoles($user['user_id']);
+	$username = trim($input['username']);
+	$password = trim($input['password']);
 
-			// Getting specialized info
-			$specializedInfo = getUserSpecializedInfo($user['user_id']);
+	$user = authenticateUser($username, $password);
 
-			// Saving it to the session
-			$_SESSION['user'] = [
-				'id' => $user['user_id'],
-				'username' => $user['username'],
-				'first_name' => $user['first_name'],
-				'last_name' => $user['last_name'],
-				'middle_name' => $user['middle_name'],
-				'email' => $user['email'],
-				'phone' => $user['phone'],
-				'created_at' => $user['created_at'],
-				'roles' => $roles,
-				'specialized_info' => $specializedInfo,
-				'logged_in' => true
-			];
+	if ($user) {
+		// Получаем роли пользователя
+		$roles = getUserRoles($user['user_id']);
 
-			echo json_encode([
-				'status' => 'success',
-				'message' => 'Login successful',
-				'user' => $_SESSION['user']
-			]);
-		} else {
-			echo json_encode([
-				'status' => 'error',
-				'message' => 'Invalid username or password'
-			]);
-		}
+		// Получаем специализированную информацию
+		$specializedInfo = getUserSpecializedInfo($user['user_id']);
 
-	} catch (Exception $e) {
+		// Сохраняем в сессии
+		$_SESSION['user'] = [
+			'id' => $user['user_id'],
+			'username' => $user['username'],
+			'first_name' => $user['first_name'],
+			'last_name' => $user['last_name'],
+			'middle_name' => $user['middle_name'],
+			'email' => $user['email'],
+			'phone' => $user['phone'],
+			'created_at' => $user['created_at'],
+			'roles' => $roles,
+			'specialized_info' => $specializedInfo,
+			'logged_in' => true
+		];
+
+		echo json_encode([
+			'status' => 'success',
+			'message' => 'Login successful',
+			'user' => $_SESSION['user']
+		]);
+	} else {
+		http_response_code(401);
 		echo json_encode([
 			'status' => 'error',
-			'message' => $e->getMessage()
+			'message' => 'Invalid username or password'
 		]);
 	}
-} else {
-	echo json_encode([
-		'status' => 'error',
-		'message' => 'Invalid request method'
-	]);
+
+} catch (Exception $e) {
+	$code = $e->getCode() ?: 500;
+	handleAPIError($e, $code);
 }
 ?>

@@ -1,15 +1,17 @@
 <?php
-session_start();
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+require_once 'middleware.php';
 
-session_unset();
-session_destroy();
+try {
+	setupAPI();
 
-echo json_encode([
-	'status' => 'success',
-	'message' => 'Logout successful'
-]);
+	session_unset();
+	session_destroy();
+
+	echo json_encode([
+		'status' => 'success',
+		'message' => 'Logout successful'
+	]);
+} catch (Exception $e) {
+	handleAPIError($e);
+}
 ?>

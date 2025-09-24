@@ -23,7 +23,7 @@ function setupAPI()
 // Проверка аутентификации пользователя
 function requireAuth($allowedRoles = [])
 {
-	if (!isset($_SESSION['user']) || $_SESSION['user']['logged_in'] !== true) {
+	if (!isset($_SESSION['user']) || !$_SESSION['user']['logged_in']) {
 		http_response_code(401);
 		echo json_encode(['status' => 'error', 'message' => 'Authentication required']);
 		exit();
@@ -52,5 +52,13 @@ function handleAPIError(Exception $e, $code = 500)
 		'timestamp' => date('Y-m-d H:i:s')
 	]);
 	exit();
+}
+
+// Проверка метода запроса
+function requireMethod($allowedMethods)
+{
+	if (!in_array($_SERVER['REQUEST_METHOD'], (array) $allowedMethods)) {
+		throw new Exception('Method not allowed', 405);
+	}
 }
 ?>

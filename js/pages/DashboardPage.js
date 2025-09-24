@@ -504,7 +504,7 @@ class DashboardPage extends BasePage {
 				maintainAspectRatio: false,
 				plugins: {
 					legend: {
-						position: 'top',
+						position: 'none',
 						labels: {
 							color: '#fff',
 							font: {

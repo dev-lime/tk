@@ -12,8 +12,8 @@ function executePaginatedQuery($baseQuery, $countQuery, $params = [], $limit = 1
 	// Получаем общее количество
 	$countResult = pg_query_params($con, $countQuery, $params);
 	if (!$countResult)
-		throw new Exception("Count query failed");
-	$totalCount = (int) pg_fetch_result($countResult, 0); // ???
+		throw new Exception("Count query failed: " . pg_last_error($con));
+	$totalCount = (int) pg_fetch_result($countResult, 0, 0);
 
 	// Добавляем сортировку и пагинацию
 	$offset = ($page - 1) * $limit;
@@ -21,7 +21,7 @@ function executePaginatedQuery($baseQuery, $countQuery, $params = [], $limit = 1
 
 	$dataResult = pg_query_params($con, $dataQuery, $params);
 	if (!$dataResult)
-		throw new Exception("Data query failed");
+		throw new Exception("Data query failed: " . pg_last_error($con));
 
 	// Собираем результаты
 	$data = [];
@@ -44,5 +44,15 @@ function applyClientFilter($userId, $userRoles)
 		return " AND o.client_id = " . (int) $userId;
 	}
 	return "";
+}
+
+// Функция для получения колонок из результата
+function pg_fetch_all_columns($result, $column = 0)
+{
+	$columns = [];
+	while ($row = pg_fetch_row($result)) {
+		$columns[] = $row[$column];
+	}
+	return $columns;
 }
 ?>
