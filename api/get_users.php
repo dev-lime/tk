@@ -105,6 +105,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || $_SERVER['REQUEST_METHOD'] === 'OPTI
 
 			$row['roles'] = $roles;
 			$users[] = $row;
+
+			// Get specialized info for clients and drivers
+			$specializedInfo = [];
+
+			// Check if user is a client
+			$clientQuery = "SELECT company_name FROM clients WHERE user_id = $1";
+			$clientResult = pg_query_params($con, $clientQuery, [$row['user_id']]);
+			if (pg_num_rows($clientResult) > 0) {
+				$specializedInfo['client'] = pg_fetch_assoc($clientResult);
+			}
+
+			// Check if user is a driver
+			$driverQuery = "SELECT license_number FROM drivers WHERE user_id = $1";
+			$driverResult = pg_query_params($con, $driverQuery, [$row['user_id']]);
+			if (pg_num_rows($driverResult) > 0) {
+				$specializedInfo['driver'] = pg_fetch_assoc($driverResult);
+			}
+
+			$row['specialized_info'] = $specializedInfo;
 		}
 
 		echo json_encode([
