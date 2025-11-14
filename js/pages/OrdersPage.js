@@ -325,71 +325,74 @@ class OrdersPage extends TablePage {
 		];
 
 		return `
-            <div class="edit-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Origin *</label>
-                        <input type="text" class="form-input" id="editOrigin" value="${order.origin || ''}" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Destination *</label>
-                        <input type="text" class="form-input" id="editDestination" value="${order.destination || ''}" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Price ($)</label>
-                        <input type="number" class="form-input" id="editPrice" step="0.01" value="${order.price || ''}">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Weight (kg)</label>
-                        <input type="number" class="form-input" id="editWeight" value="${order.weight || ''}">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" id="editStatus">
-                            ${statusOptions.map(option => `
-                                <option value="${option.value}" ${order.status === option.value ? 'selected' : ''}>
-                                    ${option.label}
-                                </option>
-                            `).join('')}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Delivery Date</label>
-                        <input type="date" class="form-input" id="editDeliveryDate" 
-                               value="${order.delivery_date ? order.delivery_date.split('T')[0] : ''}">
-                    </div>
-                </div>
-
+        <div class="edit-form">
+            <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Driver</label>
-                    <select class="form-select" id="editDriverId">
-                        <option value="">No driver assigned</option>
-                        <!-- Drivers will be loaded dynamically -->
-                    </select>
+                    <label class="form-label">Origin *</label>
+                    <input type="text" class="form-input" id="editOrigin" value="${order.origin || ''}" required>
                 </div>
-
                 <div class="form-group">
-                    <label class="form-label">Vehicle</label>
-                    <select class="form-select" id="editVehicleId">
-                        <option value="">No vehicle assigned</option>
-                        <!-- Vehicles will be loaded dynamically -->
-                    </select>
+                    <label class="form-label">Destination *</label>
+                    <input type="text" class="form-input" id="editDestination" value="${order.destination || ''}" required>
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label">Cargo Description</label>
-                    <textarea class="form-textarea" id="editDescription" rows="3">${order.description || ''}</textarea>
-                </div>
-
-                <div id="editFormMessages"></div>
             </div>
-        `;
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Price ($)</label>
+                    <input type="number" class="form-input" id="editPrice" step="0.01" value="${order.price || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Weight (kg)</label>
+                    <input type="number" class="form-input" id="editWeight" value="${order.weight || ''}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="editStatus">
+                        ${statusOptions.map(option => `
+                            <option value="${option.value}" ${order.status === option.value ? 'selected' : ''}>
+                                ${option.label}
+                            </option>
+                        `).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Delivery Date</label>
+                    <input type="date" class="form-input" id="editDeliveryDate" 
+                           value="${order.delivery_date ? order.delivery_date.split('T')[0] : ''}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    Driver
+                    <span class="availability-info" id="driverAvailabilityInfo"></span>
+                </label>
+                <select class="form-select" id="editDriverId">
+                    <option value="">No driver assigned</option>
+                    <!-- Drivers will be loaded dynamically -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Vehicle</label>
+                <select class="form-select" id="editVehicleId">
+                    <option value="">No vehicle assigned</option>
+                    <!-- Vehicles will be loaded dynamically -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Cargo Description</label>
+                <textarea class="form-textarea" id="editDescription" rows="3">${order.description || ''}</textarea>
+            </div>
+
+            <div id="editFormMessages"></div>
+        </div>
+    `;
 	}
 
 	renderEditFooter(order) {
@@ -423,17 +426,14 @@ class OrdersPage extends TablePage {
 				}
 			}
 
-			// Загружаем список всех транспортных средств с информацией о занятости
+			// Загружаем список всех транспортных средств (без информации о занятости)
 			const vehiclesData = await this.apiCall('api/get_vehicles.php');
 			if (vehiclesData.status === 'success') {
 				const vehiclesSelect = document.getElementById('editVehicleId');
 				vehiclesSelect.innerHTML = '<option value="">No vehicle assigned</option>' +
 					vehiclesData.vehicles.map(vehicle => `
-                        <option value="${vehicle.vehicle_id}" 
-                                ${vehicle.availability === 'busy' ? 'style="color: #dc3545; font-style: italic;"' : ''}
-                                data-availability="${vehicle.availability}">
+                        <option value="${vehicle.vehicle_id}">
                             ${vehicle.model} (${vehicle.plate_number}) - ${vehicle.capacity_kg}kg
-                            ${vehicle.availability === 'busy' ? ' - BUSY' : ' - Available'}
                         </option>
                     `).join('');
 
@@ -444,57 +444,62 @@ class OrdersPage extends TablePage {
 				}
 			}
 
-			// Добавляем обработчики для показа предупреждений
-			this.setupAvailabilityWarnings();
+			// Добавляем обработчики для показа предупреждений только для водителей
+			this.setupDriverAvailabilityWarnings();
 
 		} catch (error) {
 			console.error('Error loading form data:', error);
 		}
 	}
 
-	setupAvailabilityWarnings() {
+	setupDriverAvailabilityWarnings() {
 		const driversSelect = document.getElementById('editDriverId');
-		const vehiclesSelect = document.getElementById('editVehicleId');
+		const driverInfo = document.getElementById('driverAvailabilityInfo');
 		const messagesContainer = document.getElementById('editFormMessages');
 
-		const showWarning = (message, type = 'warning') => {
-			messagesContainer.innerHTML = `
-                <div class="form-message ${type}" style="display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-		};
-
-		const clearWarning = () => {
-			messagesContainer.innerHTML = '';
-		};
-
-		driversSelect.addEventListener('change', () => {
+		const updateDriverAvailabilityInfo = () => {
 			const selectedOption = driversSelect.options[driversSelect.selectedIndex];
 			const availability = selectedOption.getAttribute('data-availability');
 
 			if (availability === 'busy') {
-				showWarning('Selected driver is currently busy with another order. This may cause scheduling conflicts.', 'warning');
+				driverInfo.innerHTML = '<span class="availability-busy">● Busy</span>';
 			} else if (availability === 'available') {
-				clearWarning();
+				driverInfo.innerHTML = '<span class="availability-available">● Available</span>';
+			} else {
+				driverInfo.innerHTML = '';
 			}
-		});
+		};
 
-		vehiclesSelect.addEventListener('change', () => {
-			const selectedOption = vehiclesSelect.options[vehiclesSelect.selectedIndex];
+		driversSelect.addEventListener('change', () => {
+			updateDriverAvailabilityInfo();
+
+			const selectedOption = driversSelect.options[driversSelect.selectedIndex];
 			const availability = selectedOption.getAttribute('data-availability');
 
 			if (availability === 'busy') {
-				showWarning('Selected vehicle is currently in use for another order. This may cause scheduling conflicts.', 'warning');
-			} else if (availability === 'available') {
-				// Не очищаем предупреждение, если есть другое активное предупреждение
-				const currentMessage = messagesContainer.querySelector('.form-message');
-				if (!currentMessage || !currentMessage.textContent.includes('driver')) {
-					clearWarning();
-				}
+				this.showFormWarning('Selected driver is currently busy with another order. This may cause scheduling conflicts.');
+			} else {
+				this.clearFormWarning();
 			}
 		});
+
+		// Инициализируем информацию при загрузке
+		updateDriverAvailabilityInfo();
+	}
+
+	showFormWarning(message) {
+		const messagesContainer = document.getElementById('editFormMessages');
+		messagesContainer.innerHTML = `
+            <div class="form-message warning" style="display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>${message}</span>
+            </div>
+        `;
+	}
+
+	clearFormWarning() {
+		const messagesContainer = document.getElementById('editFormMessages');
+		messagesContainer.innerHTML = '';
 	}
 
 	async updateOrder(orderId) {
