@@ -289,8 +289,255 @@ class OrdersPage extends TablePage {
         `;
 	}
 
-	editOrder(orderId) {
-		this.showSuccess(`Edit order ${orderId} functionality will be implemented soon!`);
+	async editOrder(orderId) {
+		try {
+			this.showLoading();
+
+			// Загружаем данные заказа для редактирования
+			const data = await this.apiCall(`api/get_order.php?order_id=${orderId}`);
+
+			if (data.status === 'success') {
+				const order = data.order;
+				const content = this.renderEditForm(order);
+				const footer = this.renderEditFooter(order);
+
+				this.showModal(`Edit Order #${order.order_id}`, content, footer);
+
+				// Загружаем дополнительные данные для выпадающих списков
+				await this.loadEditFormData(orderId);
+			} else {
+				throw new Error(data.message);
+			}
+		} catch (error) {
+			this.showError('Failed to load order for editing: ' + error.message);
+		} finally {
+			this.hideLoading();
+		}
+	}
+
+	renderEditForm(order) {
+		const statusOptions = [
+			{ value: 'pending', label: 'Pending' },
+			{ value: 'assigned', label: 'Assigned' },
+			{ value: 'in_transit', label: 'In Transit' },
+			{ value: 'delivered', label: 'Delivered' },
+			{ value: 'cancelled', label: 'Cancelled' }
+		];
+
+		return `
+            <div class="edit-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Origin *</label>
+                        <input type="text" class="form-input" id="editOrigin" value="${order.origin || ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Destination *</label>
+                        <input type="text" class="form-input" id="editDestination" value="${order.destination || ''}" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Price ($)</label>
+                        <input type="number" class="form-input" id="editPrice" step="0.01" value="${order.price || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Weight (kg)</label>
+                        <input type="number" class="form-input" id="editWeight" value="${order.weight || ''}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="editStatus">
+                            ${statusOptions.map(option => `
+                                <option value="${option.value}" ${order.status === option.value ? 'selected' : ''}>
+                                    ${option.label}
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Delivery Date</label>
+                        <input type="date" class="form-input" id="editDeliveryDate" 
+                               value="${order.delivery_date ? order.delivery_date.split('T')[0] : ''}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Driver</label>
+                    <select class="form-select" id="editDriverId">
+                        <option value="">No driver assigned</option>
+                        <!-- Drivers will be loaded dynamically -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Vehicle</label>
+                    <select class="form-select" id="editVehicleId">
+                        <option value="">No vehicle assigned</option>
+                        <!-- Vehicles will be loaded dynamically -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Cargo Description</label>
+                    <textarea class="form-textarea" id="editDescription" rows="3">${order.description || ''}</textarea>
+                </div>
+
+                <div id="editFormMessages"></div>
+            </div>
+        `;
+	}
+
+	renderEditFooter(order) {
+		return `
+            <button class="btn-secondary" onclick="ordersPage.closeModal()">Cancel</button>
+            <button class="btn-primary" onclick="ordersPage.updateOrder(${order.order_id})">Save Changes</button>
+        `;
+	}
+
+	async loadEditFormData(orderId) {
+		try {
+			// Загружаем список всех водителей с информацией о занятости
+			const driversData = await this.apiCall('api/get_drivers.php');
+			if (driversData.status === 'success') {
+				const driversSelect = document.getElementById('editDriverId');
+				driversSelect.innerHTML = '<option value="">No driver assigned</option>' +
+					driversData.drivers.map(driver => `
+                        <option value="${driver.user_id}" 
+                                ${driver.availability === 'busy' ? 'style="color: #dc3545; font-style: italic;"' : ''}
+                                data-availability="${driver.availability}">
+                            ${driver.first_name} ${driver.last_name} 
+                            (${driver.license_number})
+                            ${driver.availability === 'busy' ? ' - BUSY' : ' - Available'}
+                        </option>
+                    `).join('');
+
+				// Устанавливаем текущего водителя если есть
+				const currentOrder = await this.apiCall(`api/get_order.php?order_id=${orderId}`);
+				if (currentOrder.status === 'success' && currentOrder.order.driver_id) {
+					driversSelect.value = currentOrder.order.driver_id;
+				}
+			}
+
+			// Загружаем список всех транспортных средств с информацией о занятости
+			const vehiclesData = await this.apiCall('api/get_vehicles.php');
+			if (vehiclesData.status === 'success') {
+				const vehiclesSelect = document.getElementById('editVehicleId');
+				vehiclesSelect.innerHTML = '<option value="">No vehicle assigned</option>' +
+					vehiclesData.vehicles.map(vehicle => `
+                        <option value="${vehicle.vehicle_id}" 
+                                ${vehicle.availability === 'busy' ? 'style="color: #dc3545; font-style: italic;"' : ''}
+                                data-availability="${vehicle.availability}">
+                            ${vehicle.model} (${vehicle.plate_number}) - ${vehicle.capacity_kg}kg
+                            ${vehicle.availability === 'busy' ? ' - BUSY' : ' - Available'}
+                        </option>
+                    `).join('');
+
+				// Устанавливаем текущее транспортное средство если есть
+				const currentOrder = await this.apiCall(`api/get_order.php?order_id=${orderId}`);
+				if (currentOrder.status === 'success' && currentOrder.order.vehicle_id) {
+					vehiclesSelect.value = currentOrder.order.vehicle_id;
+				}
+			}
+
+			// Добавляем обработчики для показа предупреждений
+			this.setupAvailabilityWarnings();
+
+		} catch (error) {
+			console.error('Error loading form data:', error);
+		}
+	}
+
+	setupAvailabilityWarnings() {
+		const driversSelect = document.getElementById('editDriverId');
+		const vehiclesSelect = document.getElementById('editVehicleId');
+		const messagesContainer = document.getElementById('editFormMessages');
+
+		const showWarning = (message, type = 'warning') => {
+			messagesContainer.innerHTML = `
+                <div class="form-message ${type}" style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+		};
+
+		const clearWarning = () => {
+			messagesContainer.innerHTML = '';
+		};
+
+		driversSelect.addEventListener('change', () => {
+			const selectedOption = driversSelect.options[driversSelect.selectedIndex];
+			const availability = selectedOption.getAttribute('data-availability');
+
+			if (availability === 'busy') {
+				showWarning('Selected driver is currently busy with another order. This may cause scheduling conflicts.', 'warning');
+			} else if (availability === 'available') {
+				clearWarning();
+			}
+		});
+
+		vehiclesSelect.addEventListener('change', () => {
+			const selectedOption = vehiclesSelect.options[vehiclesSelect.selectedIndex];
+			const availability = selectedOption.getAttribute('data-availability');
+
+			if (availability === 'busy') {
+				showWarning('Selected vehicle is currently in use for another order. This may cause scheduling conflicts.', 'warning');
+			} else if (availability === 'available') {
+				// Не очищаем предупреждение, если есть другое активное предупреждение
+				const currentMessage = messagesContainer.querySelector('.form-message');
+				if (!currentMessage || !currentMessage.textContent.includes('driver')) {
+					clearWarning();
+				}
+			}
+		});
+	}
+
+	async updateOrder(orderId) {
+		try {
+			this.showLoading();
+
+			// Собираем данные формы
+			const formData = {
+				order_id: orderId,
+				origin: document.getElementById('editOrigin').value,
+				destination: document.getElementById('editDestination').value,
+				cargo_description: document.getElementById('editDescription').value,
+				weight_kg: document.getElementById('editWeight').value || null,
+				price: document.getElementById('editPrice').value || null,
+				status: document.getElementById('editStatus').value,
+				delivery_date: document.getElementById('editDeliveryDate').value || null,
+				driver_id: document.getElementById('editDriverId').value || null,
+				vehicle_id: document.getElementById('editVehicleId').value || null
+			};
+
+			// Валидация
+			if (!formData.origin.trim() || !formData.destination.trim()) {
+				throw new Error('Origin and destination are required');
+			}
+
+			const response = await this.apiCall('api/update_order.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(formData)
+			});
+
+			if (response.status === 'success') {
+				this.showSuccess('Order updated successfully');
+				this.closeModal();
+				this.loadData(); // Обновляем таблицу
+			} else {
+				throw new Error(response.message);
+			}
+		} catch (error) {
+			this.showError('Failed to update order: ' + error.message);
+		} finally {
+			this.hideLoading();
+		}
 	}
 
 	async cancelOrder(orderId) {

@@ -4,6 +4,10 @@ class DashboardPage extends BasePage {
 		this.pageName = 'dashboard';
 		this.chart = null;
 		this.currentPeriod = 'week';
+		this.isDragging = false;
+		this.dragItem = null;
+		this.dragStartIndex = null;
+		this.dragEndIndex = null;
 	}
 
 	async load() {
@@ -279,11 +283,208 @@ class DashboardPage extends BasePage {
         `;
 	}
 
+	updateUserGreeting() {
+		const user = window.app?.currentUser;
+		const greeting = document.querySelector('.content-subtitle');
+
+		if (greeting && user) {
+			const timeBasedGreeting = this.getTimeBasedGreeting();
+			const userName = user.first_name || 'User';
+			const dynamicSubtitle = this.getDynamicSubtitle();
+
+			greeting.textContent = `${timeBasedGreeting}, ${userName}! ${dynamicSubtitle}`;
+		}
+	}
+
+	getTimeBasedGreeting() {
+		const now = new Date();
+		const hours = now.getHours();
+		const dayOfWeek = now.getDay();
+		const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+		// Утренние приветствия (5:00 - 11:59)
+		if (hours >= 5 && hours < 12) {
+			const morningGreetings = [
+				'Good morning',
+				'Rise and shine',
+				'Morning',
+				'Hello there',
+				'Top of the morning'
+			];
+
+			// Особые приветствия для раннего утра
+			if (hours >= 5 && hours < 7) {
+				return 'Early bird';
+			}
+
+			// Особые приветствия для понедельника
+			if (dayOfWeek === 1 && hours < 10) {
+				return 'Happy Monday';
+			}
+
+			return morningGreetings[Math.floor(Math.random() * morningGreetings.length)];
+		}
+
+		// Дневные приветствия (12:00 - 16:59)
+		if (hours >= 12 && hours < 17) {
+			const afternoonGreetings = [
+				'Good afternoon',
+				'Hello',
+				'Afternoon',
+				'Hey there',
+				'Greetings'
+			];
+
+			// Послеобеденное время
+			if (hours >= 14 && hours < 16) {
+				return 'Happy afternoon';
+			}
+
+			return afternoonGreetings[Math.floor(Math.random() * afternoonGreetings.length)];
+		}
+
+		// Вечерние приветствия (17:00 - 21:59)
+		if (hours >= 17 && hours < 22) {
+			const eveningGreetings = [
+				'Good evening',
+				'Evening',
+				'Hello',
+				'Hey',
+				'Good to see you'
+			];
+
+			// Вечер пятницы
+			if (dayOfWeek === 5 && hours >= 18) {
+				return 'Happy Friday evening';
+			}
+
+			return eveningGreetings[Math.floor(Math.random() * eveningGreetings.length)];
+		}
+
+		// Ночные приветствия (22:00 - 4:59)
+		const nightGreetings = [
+			'Good night',
+			'Working late',
+			'Still up',
+			'Night owl',
+			'Hello'
+		];
+
+		// Очень поздняя ночь
+		if (hours >= 2 && hours < 5) {
+			return 'Burning the midnight oil';
+		}
+
+		// Вечер выходного дня
+		if (isWeekend && hours >= 22) {
+			return 'Weekend night';
+		}
+
+		return nightGreetings[Math.floor(Math.random() * nightGreetings.length)];
+	}
+
+	getDynamicSubtitle() {
+		const now = new Date();
+		const hours = now.getHours();
+		const dayOfWeek = now.getDay();
+		const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+		// Утренние подзаголовки
+		if (hours >= 5 && hours < 12) {
+			const morningSubtitles = [
+				"Here's what's happening today.",
+				"Let's make today great!",
+				"Ready for a productive day?",
+				"Your daily overview is ready.",
+				"Time to check today's progress."
+			];
+
+			if (dayOfWeek === 1) { // Понедельник
+				return "New week, new opportunities!";
+			}
+
+			return morningSubtitles[Math.floor(Math.random() * morningSubtitles.length)];
+		}
+
+		// Дневные подзаголовки
+		if (hours >= 12 && hours < 17) {
+			const afternoonSubtitles = [
+				"Here's today's progress so far.",
+				"Stay updated with real-time stats.",
+				"How's your day going?",
+				"Your dashboard is looking good.",
+				"Latest updates for you."
+			];
+
+			if (hours === 12) { // Обеденное время
+				return "Lunch break stats for you.";
+			}
+
+			return afternoonSubtitles[Math.floor(Math.random() * afternoonSubtitles.length)];
+		}
+
+		// Вечерние подзаголовки
+		if (hours >= 17 && hours < 22) {
+			const eveningSubtitles = [
+				"Wrapping up today's activities.",
+				"Evening overview ready.",
+				"Today's final stats are in.",
+				"How did we do today?",
+				"End of day summary."
+			];
+
+			if (dayOfWeek === 5) { // Пятница
+				return "Great job this week! Weekend is almost here.";
+			}
+
+			if (isWeekend) {
+				return "Enjoy your weekend! Here's the latest.";
+			}
+
+			return eveningSubtitles[Math.floor(Math.random() * eveningSubtitles.length)];
+		}
+
+		// Ночные подзаголовки
+		const nightSubtitles = [
+			"Late night stats for you.",
+			"Working hard? Here's the latest.",
+			"Night shift dashboard ready.",
+			"24/7 monitoring active.",
+			"Your overnight overview."
+		];
+
+		if (hours >= 2 && hours < 5) {
+			return "Early bird gets the worm! Stats are ready.";
+		}
+
+		return nightSubtitles[Math.floor(Math.random() * nightSubtitles.length)];
+	}
+
+	startGreetingAutoUpdate() {
+		// Очищаем существующий интервал если есть
+		if (this.greetingUpdateInterval) {
+			clearInterval(this.greetingUpdateInterval);
+		}
+
+		// Обновляем приветствие каждый час
+		this.greetingUpdateInterval = setInterval(() => {
+			this.updateUserGreeting();
+		}, 60 * 60 * 1000); // 1 час
+
+		// Обновляем при возвращении на вкладку
+		/*document.addEventListener('visibilitychange', () => {
+			if (!document.hidden) {
+				this.updateUserGreeting();
+			}
+		});*/
+	}
+
 	async init() {
 		super.init();
 
 		// Update user greeting
 		this.updateUserGreeting();
+		this.startGreetingAutoUpdate();
 
 		// Load data
 		await this.loadDashboardStats();
@@ -293,15 +494,173 @@ class DashboardPage extends BasePage {
 		// Add event listeners
 		this.initEventListeners();
 
+		// Initialize drag and drop
+		this.initDragAndDrop();
+
 		console.log('Dashboard page initialized');
 	}
 
-	updateUserGreeting() {
-		const user = window.app?.currentUser;
-		const greeting = document.querySelector('.content-subtitle');
-		if (greeting && user) {
-			greeting.textContent = `Welcome back, ${user.first_name}! Here's what's happening today.`;
+	initDragAndDrop() {
+		const dashboardGrid = document.querySelector('.dashboard-grid');
+		if (!dashboardGrid) return;
+
+		const cards = Array.from(dashboardGrid.children);
+
+		cards.forEach((card, index) => {
+			card.setAttribute('draggable', 'true');
+			card.setAttribute('data-index', index);
+
+			// Убираем стандартное поведение браузера при перетаскивании
+			card.addEventListener('dragstart', this.handleDragStart.bind(this));
+			card.addEventListener('dragover', this.handleDragOver.bind(this));
+			card.addEventListener('dragenter', this.handleDragEnter.bind(this));
+			card.addEventListener('dragleave', this.handleDragLeave.bind(this));
+			card.addEventListener('dragend', this.handleDragEnd.bind(this));
+			card.addEventListener('drop', this.handleDrop.bind(this));
+		});
+	}
+
+	handleDragStart(e) {
+		this.dragItem = e.target;
+		this.dragStartIndex = parseInt(this.dragItem.getAttribute('data-index'));
+
+		// Добавляем класс для визуального эффекта при перетаскивании
+		this.dragItem.classList.add('dragging');
+
+		// Устанавливаем эффект перетаскивания
+		e.dataTransfer.effectAllowed = 'move';
+		e.dataTransfer.setData('text/html', this.dragItem.innerHTML);
+	}
+
+	handleDragOver(e) {
+		e.preventDefault();
+		e.dataTransfer.dropEffect = 'move';
+		return false;
+	}
+
+	handleDragEnter(e) {
+		e.preventDefault();
+		if (e.target.classList.contains('dashboard-card') && e.target !== this.dragItem) {
+			e.target.classList.add('drag-over');
 		}
+	}
+
+	handleDragLeave(e) {
+		if (e.target.classList.contains('dashboard-card')) {
+			e.target.classList.remove('drag-over');
+		}
+	}
+
+	handleDragEnd(e) {
+		// Убираем все классы
+		const cards = document.querySelectorAll('.dashboard-card');
+		cards.forEach(card => {
+			card.classList.remove('dragging');
+			card.classList.remove('drag-over');
+		});
+
+		this.dragItem = null;
+		this.dragStartIndex = null;
+		this.dragEndIndex = null;
+	}
+
+	handleDrop(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (e.target.classList.contains('dashboard-card') && e.target !== this.dragItem) {
+			// Убираем класс drag-over
+			e.target.classList.remove('drag-over');
+
+			const dropTarget = e.target;
+			const dragIndex = this.dragStartIndex;
+			const dropIndex = parseInt(dropTarget.getAttribute('data-index'));
+
+			// Меняем карточки местами
+			this.swapCards(dragIndex, dropIndex);
+
+			// Обновляем индексы
+			this.updateCardIndexes();
+
+			// Сохраняем порядок в localStorage
+			this.saveCardOrder();
+		}
+
+		return false;
+	}
+
+	swapCards(fromIndex, toIndex) {
+		const dashboardGrid = document.querySelector('.dashboard-grid');
+		const cards = Array.from(dashboardGrid.children);
+
+		// Получаем элементы для замены
+		const fromElement = cards[fromIndex];
+		const toElement = cards[toIndex];
+
+		// Меняем местами
+		if (fromIndex < toIndex) {
+			toElement.parentNode.insertBefore(fromElement, toElement.nextSibling);
+		} else {
+			toElement.parentNode.insertBefore(fromElement, toElement);
+		}
+	}
+
+	updateCardIndexes() {
+		const dashboardGrid = document.querySelector('.dashboard-grid');
+		const cards = Array.from(dashboardGrid.children);
+
+		cards.forEach((card, index) => {
+			card.setAttribute('data-index', index);
+		});
+	}
+
+	saveCardOrder() {
+		const dashboardGrid = document.querySelector('.dashboard-grid');
+		const cards = Array.from(dashboardGrid.children);
+		const cardOrder = cards.map(card => card.querySelector('.card-title').textContent);
+
+		// Сохраняем порядок в localStorage
+		localStorage.setItem('dashboardCardOrder', JSON.stringify(cardOrder));
+	}
+
+	loadCardOrder() {
+		const savedOrder = localStorage.getItem('dashboardCardOrder');
+		if (!savedOrder) return null;
+
+		try {
+			return JSON.parse(savedOrder);
+		} catch (e) {
+			console.error('Error loading card order:', e);
+			return null;
+		}
+	}
+
+	applySavedCardOrder() {
+		const savedOrder = this.loadCardOrder();
+		if (!savedOrder) return;
+
+		const dashboardGrid = document.querySelector('.dashboard-grid');
+		const cards = Array.from(dashboardGrid.children);
+
+		// Создаем карту текущих карточек по их заголовкам
+		const cardMap = {};
+		cards.forEach(card => {
+			const title = card.querySelector('.card-title').textContent;
+			cardMap[title] = card;
+		});
+
+		// Очищаем сетку
+		dashboardGrid.innerHTML = '';
+
+		// Добавляем карточки в сохраненном порядке
+		savedOrder.forEach(title => {
+			if (cardMap[title]) {
+				dashboardGrid.appendChild(cardMap[title]);
+			}
+		});
+
+		// Обновляем индексы
+		this.updateCardIndexes();
 	}
 
 	async loadDashboardStats() {
@@ -316,13 +675,18 @@ class DashboardPage extends BasePage {
 
 			if (data.status === 'success') {
 				this.updateDashboardCards(data.data);
+
+				// После обновления данных применяем сохраненный порядок
+				setTimeout(() => {
+					this.applySavedCardOrder();
+					this.initDragAndDrop();
+				}, 100);
 			} else {
 				throw new Error(data.message || 'Unknown error');
 			}
 		} catch (error) {
 			console.error('Error loading dashboard stats:', error);
 			this.showError('Failed to load dashboard statistics');
-			// Показываем нулевые значения при ошибке
 			this.showEmptyState();
 		}
 	}
@@ -685,10 +1049,19 @@ class DashboardPage extends BasePage {
 	}
 
 	async destroy() {
+		if (this.greetingUpdateInterval) {
+			clearInterval(this.greetingUpdateInterval);
+			this.greetingUpdateInterval = null;
+		}
+		document.removeEventListener('visibilitychange', this.updateUserGreeting);
+
+		super.destroy();
+
 		if (this.chart) {
 			this.chart.destroy();
 			this.chart = null;
 		}
+
 		super.destroy();
 	}
 }
