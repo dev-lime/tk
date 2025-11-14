@@ -15,6 +15,53 @@ class BasePage {
 		console.log(`Destroying ${this.pageName} page`);
 	}
 
+	showModal(title, content, footer = '') {
+		// Закрываем существующее модальное окно
+		this.closeModal();
+
+		const modalHTML = `
+            <div class="modal-overlay" id="modal-overlay">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">${title}</h2>
+                        <button class="modal-close" onclick="app.currentPageInstance.closeModal()">×</button>
+                    </div>
+                    <div class="modal-body">
+                        ${content}
+                    </div>
+                    ${footer ? `<div class="modal-footer">${footer}</div>` : ''}
+                </div>
+            </div>
+        `;
+
+		document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+		// Закрытие по клику на оверлей
+		document.getElementById('modal-overlay').addEventListener('click', (e) => {
+			if (e.target.id === 'modal-overlay') {
+				this.closeModal();
+			}
+		});
+
+		// Закрытие по ESC
+		this.modalEscHandler = (e) => {
+			if (e.key === 'Escape') {
+				this.closeModal();
+			}
+		};
+		document.addEventListener('keydown', this.modalEscHandler);
+	}
+
+	closeModal() {
+		const existingModal = document.getElementById('modal-overlay');
+		if (existingModal) {
+			existingModal.remove();
+		}
+		if (this.modalEscHandler) {
+			document.removeEventListener('keydown', this.modalEscHandler);
+		}
+	}
+
 	showError(message, context = 'global') {
 		console.error(`Error on ${this.pageName}:`, message);
 

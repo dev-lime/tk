@@ -10,26 +10,21 @@ class UsersPage extends TablePage {
                 <h1 class="content-title">Users Management</h1>
             </div>
 
-			<div class="filter-group">
-				<select id="roleFilter" class="filter-select">
-					<option value="">All Roles</option>
-					<option value="admin">Admin</option>
-					<option value="client">Client</option>
-					<option value="driver">Driver</option>
-					<option value="dispatcher">Dispatcher</option>
-				</select>
-				<input type="text" id="searchUsers" placeholder="Search users..." class="filter-input">
-				<button class="reset-filters">Reset</button>
-				<button class="filter-btn">Apply Filters</button>
-			</div>
+            <div class="filter-group">
+                <select id="roleFilter" class="filter-select">
+                    <option value="">All Roles</option>
+                    <option value="admin">Admin</option>
+                    <option value="client">Client</option>
+                    <option value="driver">Driver</option>
+                    <option value="dispatcher">Dispatcher</option>
+                </select>
+                <input type="text" id="searchUsers" placeholder="Search users..." class="filter-input">
+                <button class="reset-filters">Reset</button>
+                <button class="filter-btn">Apply Filters</button>
+            </div>
 
             <div id="usersTableContainer"></div>
             <div id="paginationContainer"></div>
-
-			<!-- ДОЛЖНО БЫТЬ ВНУТРИ PAGINATIONCONTAINER !!! --!>
-			<button class="page-btn" onclick="usersPage.openCreateModal()">
-				<i class="fas fa-plus"></i> Add User
-			</button>
         `;
 	}
 
@@ -109,14 +104,9 @@ class UsersPage extends TablePage {
 		this.loadData();
 	}
 
-	openCreateModal() {
-		// Implementation for create user modal
-		console.log('Open create user modal');
-	}
-
 	editUser(userId) {
-		// Implementation for edit user
-		console.log('Edit user:', userId);
+		// Заглушка для редактирования
+		this.showSuccess(`Edit user ${userId} functionality will be implemented soon!`);
 	}
 
 	async deleteUser(userId) {

@@ -10,7 +10,7 @@ class TransportCompanyApp {
 			'vehicles': VehiclesPage,
 			'users': UsersPage,
 			'clients': ClientsPage,
-			'clients': DriversPage,
+			'drivers': DriversPage,
 			'profile': ProfilePage,
 			'notifications': NotificationsPage
 		};

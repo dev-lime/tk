@@ -92,40 +92,46 @@ class TablePage extends BasePage {
 
 	renderPagination(totalItems) {
 		const totalPages = Math.ceil(totalItems / this.itemsPerPage);
-		if (totalPages <= 1) return '';
+		const paginationHTML = `
+			<div class="pagination">
+				<!-- ЭТА КНОПКА ДОЛЖНА БЫТЬ СЛЕВА, ОСТАЛЬНЫЕ СПРАВА -->
+				<button class="page-btn" onclick="${this.pageName}Page.openCreateModal()">
+					<i class="fas fa-plus"></i> Add ${this.getEntityName()}
+				</button>
 
-		return `
-            <div class="pagination">
-                <span class="pagination-info">
-                    Showing ${((this.currentPage - 1) * this.itemsPerPage) + 1}-${Math.min(this.currentPage * this.itemsPerPage, totalItems)} of ${totalItems}
-                </span>
+				<span class="pagination-info">
+					Showing ${((this.currentPage - 1) * this.itemsPerPage) + 1}-${Math.min(this.currentPage * this.itemsPerPage, totalItems)} of ${totalItems}
+				</span>
 
-                <button class="page-btn ${this.currentPage === 1 ? 'disabled' : ''}" 
-                        ${this.currentPage === 1 ? 'disabled' : ''}
-                        data-page="${this.currentPage - 1}">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                
-                ${Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+				<div class="pagination-controls">
+					<button class="page-btn ${this.currentPage === 1 ? 'disabled' : ''}" 
+							${this.currentPage === 1 ? 'disabled' : ''}
+							data-page="${this.currentPage - 1}">
+						<i class="fas fa-chevron-left"></i>
+					</button>
+					
+					${Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
 			const page = i + 1;
 			if (page > totalPages) return '';
 			return `
-                        <button class="page-btn ${this.currentPage === page ? 'active' : ''}" 
-                                data-page="${page}">
-                            ${page}
-                        </button>
+							<button class="page-btn ${this.currentPage === page ? 'active' : ''}" 
+									data-page="${page}">
+								${page}
+							</button>
                     `;
 		}).join('')}
                 
                 ${totalPages > 5 ? '<span class="pagination-ellipsis">...</span>' : ''}
                 
-                <button class="page-btn ${this.currentPage === totalPages ? 'disabled' : ''}" 
-                        ${this.currentPage === totalPages ? 'disabled' : ''}
-                        data-page="${this.currentPage + 1}">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-        `;
+					<button class="page-btn ${this.currentPage === totalPages ? 'disabled' : ''}" 
+							${this.currentPage === totalPages ? 'disabled' : ''}
+							data-page="${this.currentPage + 1}">
+						<i class="fas fa-chevron-right"></i>
+					</button>
+				</div>
+			</div>
+		`;
+		return paginationHTML;
 	}
 
 	renderTable(headers, data) {
@@ -201,5 +207,9 @@ class TablePage extends BasePage {
 
 			throw error;
 		}
+	}
+
+	getEntityName() {
+		return this.pageName.charAt(0).toUpperCase() + this.pageName.slice(1, -1);
 	}
 }
