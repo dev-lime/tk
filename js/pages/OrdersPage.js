@@ -126,12 +126,7 @@ class OrdersPage extends TablePage {
 	async viewOrder(orderId) {
 		try {
 			this.showLoading();
-
-			// Попробуйте сначала простую версию для тестирования
-			const data = await this.apiCall(`api/get_order_simple.php?order_id=${orderId}`);
-
-			// Если простая версия работает, переключитесь на основную:
-			// const data = await this.apiCall(`api/get_order.php?order_id=${orderId}`);
+			const data = await this.apiCall(`api/get_order.php?order_id=${orderId}`);
 
 			if (data.status === 'success') {
 				const order = data.order;
@@ -143,44 +138,15 @@ class OrdersPage extends TablePage {
 				throw new Error(data.message);
 			}
 		} catch (error) {
-			console.error('Error loading order:', error);
 			this.showError('Failed to load order details: ' + error.message);
-
-			// Показать демо-данные при ошибке
-			this.showDemoOrder(orderId);
 		} finally {
 			this.hideLoading();
 		}
 	}
 
-	showDemoOrder(orderId) {
-		// Демо-данные для тестирования
-		const demoOrder = {
-			order_id: orderId,
-			origin: 'Demo Origin',
-			destination: 'Demo Destination',
-			status: 'pending',
-			price: '1000.00',
-			weight: '250',
-			description: 'Demo order description',
-			created_at: new Date().toISOString(),
-			client_name: 'Demo Client',
-			company_name: 'Demo Company'
-		};
-
-		const content = this.renderOrderDetails(demoOrder);
-		const footer = `
-            <button class="btn-secondary" onclick="ordersPage.closeModal()">Close</button>
-            <div style="color: #856404; background: #fff3cd; padding: 8px; border-radius: 4px; margin-top: 10px;">
-                <small><i class="fas fa-info-circle"></i> Showing demo data due to API error</small>
-            </div>
-        `;
-
-		this.showModal(`Order #${orderId} (Demo)`, content, footer);
-	}
-
 	renderOrderDetails(order) {
 		const statusClass = this.getStatusClass(order.status);
+		const vehicleStatusClass = this.getVehicleStatusClass(order.vehicle_status);
 
 		return `
             <div class="view-card">
@@ -201,11 +167,18 @@ class OrdersPage extends TablePage {
                     <div class="view-label">Client</div>
                     <div class="view-value">
                         <div><strong>${order.client_name}</strong></div>
-                        ${order.company_name ? `<div>${order.company_name}</div>` : ''}
-                        ${order.client_email ? `<div>${order.client_email}</div>` : ''}
-                        ${order.client_phone ? `<div>${order.client_phone}</div>` : ''}
+                        ${order.company_name ? `<div>Company: ${order.company_name}</div>` : ''}
+                        ${order.client_email ? `<div>Email: ${order.client_email}</div>` : ''}
+                        ${order.client_phone ? `<div>Phone: ${order.client_phone}</div>` : ''}
                     </div>
                 </div>
+                
+                ${order.dispatcher_name ? `
+                <div class="view-field">
+                    <div class="view-label" style="color: #6f42c1; font-weight: 600;">Dispatcher</div>
+                    <div class="view-value">${order.dispatcher_name}</div>
+                </div>
+                ` : ''}
                 
                 <div class="form-row">
                     <div class="view-field">
@@ -234,14 +207,30 @@ class OrdersPage extends TablePage {
                     <div class="view-label" style="color: #28a745; font-weight: 600;">Assigned Driver</div>
                     <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 8px;">
                         <div><strong>Driver:</strong> ${order.driver_name}</div>
-                        ${order.vehicle_make ? `<div><strong>Vehicle:</strong> ${order.vehicle_make} ${order.vehicle_model} (${order.vehicle_plate})</div>` : ''}
+                        ${order.driver_license ? `<div><strong>License:</strong> ${order.driver_license}</div>` : ''}
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${order.vehicle_model ? `
+                <div class="view-field">
+                    <div class="view-label" style="color: #fd7e14; font-weight: 600;">Assigned Vehicle</div>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 8px;">
+                        <div><strong>Model:</strong> ${order.vehicle_model}</div>
+                        <div><strong>License Plate:</strong> ${order.vehicle_plate}</div>
+                        <div><strong>Capacity:</strong> ${order.vehicle_capacity ? order.vehicle_capacity + ' kg' : '-'}</div>
+                        ${order.vehicle_status ? `
+                        <div><strong>Status:</strong> 
+                            <span class="status-badge ${vehicleStatusClass}">${order.vehicle_status}</span>
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
                 ` : ''}
                 
                 ${order.description ? `
                 <div class="view-field">
-                    <div class="view-label">Description</div>
+                    <div class="view-label">Cargo Description</div>
                     <div class="view-value">${order.description}</div>
                 </div>
                 ` : ''}
@@ -265,8 +254,32 @@ class OrdersPage extends TablePage {
                     <div class="view-value">${new Date(order.delivery_date).toLocaleDateString()}</div>
                 </div>
                 ` : ''}
+                
+                ${order.history && order.history.length > 0 ? `
+                <div class="view-field">
+                    <div class="view-label">Order History</div>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 8px; max-height: 200px; overflow-y: auto;">
+                        ${order.history.map(entry => `
+                            <div style="padding: 4px 0; border-bottom: 1px solid #e9ecef;">
+                                <div><strong>${entry.action}</strong> - ${new Date(entry.created_at).toLocaleString()}</div>
+                                ${entry.description ? `<div style="font-size: 12px; color: #666;">${entry.description}</div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
             </div>
         `;
+	}
+
+	getVehicleStatusClass(status) {
+		const statusClasses = {
+			'available': 'success',
+			'in_use': 'warning',
+			'maintenance': 'error',
+			'out_of_service': 'error'
+		};
+		return statusClasses[status] || 'default';
 	}
 
 	renderOrderFooter(order) {
