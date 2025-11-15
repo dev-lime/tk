@@ -343,55 +343,6 @@ option {
 	font-size: 14px;
 }
 
-@keyframes pulse {
-	0% {
-		opacity: 1;
-	}
-
-	50% {
-		opacity: 0.5;
-	}
-
-	100% {
-		opacity: 1;
-	}
-}
-
-@font-face {
-	font-family: 'Mi Sans (Xiaomi)';
-	src: local('Mi Sans (Xiaomi) Light'), local('Mi-Sans-(Xiaomi)-Light'),
-		url('./fonts/MiSans-Light.woff2') format('woff2'),
-		url('./fonts/MiSans-Light.woff') format('woff'),
-		url('./fonts/MiSans-Light.ttf') format('truetype');
-	font-weight: 300;
-	font-style: normal;
-}
-
-@media (max-width: 900px) {
-	body {
-		flex-direction: column;
-	}
-
-	.sidebar {
-		width: 100%;
-		margin-right: 0;
-		margin-bottom: 20px;
-		height: auto;
-		position: relative;
-		top: 0;
-	}
-
-	.main-content {
-		height: auto;
-	}
-}
-
-@media (max-width: 480px) {
-	.menu-item {
-		padding: 12px;
-	}
-}
-
 /* Table Styles */
 .table-container {
 	background: rgba(255, 255, 255, 0.05);
@@ -435,6 +386,16 @@ option {
 	background: rgba(255, 255, 255, 0.02);
 }
 
+/* Role Badges */
+.role-badge {
+	display: inline-block;
+	background: rgba(66, 133, 244, 0.2);
+	color: #8ab4f8;
+	padding: 2px 8px;
+	border-radius: 12px;
+	font-size: 12px;
+}
+
 /* Status Badges */
 .status-badge {
 	padding: 4px 12px;
@@ -474,16 +435,7 @@ option {
 	color: #ccc;
 }
 
-/* Role Badges */
-.role-badge {
-	display: inline-block;
-	background: rgba(66, 133, 244, 0.2);
-	color: #8ab4f8;
-	padding: 2px 8px;
-	border-radius: 12px;
-	font-size: 11px;
-	margin: 2px;
-}
+
 
 /* Buttons */
 .btn-icon {
@@ -652,18 +604,6 @@ option {
 	animation: modalSlideIn 0.3s ease;
 }
 
-@keyframes modalSlideIn {
-	from {
-		opacity: 0;
-		transform: scale(0.9) translateY(-20px);
-	}
-
-	to {
-		opacity: 1;
-		transform: scale(1) translateY(0);
-	}
-}
-
 .modal-header {
 	padding: 20px 24px;
 	display: flex;
@@ -766,6 +706,12 @@ label {
 }
 
 /* Responsive */
+@media (max-width: 480px) {
+	.menu-item {
+		padding: 12px;
+	}
+}
+
 @media (max-width: 768px) {
 	.filter-group {
 		flex-direction: column;
@@ -805,5 +751,60 @@ label {
 	.pagination-info {
 		margin-right: 0;
 		text-align: center;
+	}
+}
+
+@media (max-width: 900px) {
+	body {
+		flex-direction: column;
+	}
+
+	.sidebar {
+		width: 100%;
+		margin-right: 0;
+		margin-bottom: 20px;
+		height: auto;
+		position: relative;
+		top: 0;
+	}
+
+	.main-content {
+		height: auto;
+	}
+}
+
+@font-face {
+	font-family: 'Mi Sans (Xiaomi)';
+	src: local('Mi Sans (Xiaomi) Light'), local('Mi-Sans-(Xiaomi)-Light'),
+		url('./fonts/MiSans-Light.woff2') format('woff2'),
+		url('./fonts/MiSans-Light.woff') format('woff'),
+		url('./fonts/MiSans-Light.ttf') format('truetype');
+	font-weight: 300;
+	font-style: normal;
+}
+
+@keyframes pulse {
+	0% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.5;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes modalSlideIn {
+	from {
+		opacity: 0;
+		transform: scale(0.9) translateY(-20px);
+	}
+
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
 	}
 }
