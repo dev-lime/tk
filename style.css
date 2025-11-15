@@ -40,6 +40,43 @@ h6 {
 	border-radius: 8px;
 }
 
+option {
+	border: none;
+	padding: 10px;
+	background: rgba(50, 50, 50);
+	color: #fff;
+}
+
+/* Input */
+input {
+	width: 100%;
+	padding: 12px;
+	background: rgba(50, 50, 50, 0.6);
+	border: 2px solid rgba(255, 255, 255, 0);
+	border-radius: 12px;
+	color: #fff;
+	font-size: 14px;
+	transition: all 0.3s ease;
+}
+
+input:focus {
+	outline: none;
+	border-color: #4285f4;
+	background: rgba(50, 50, 50, 0.8);
+}
+
+input:checked+.slider {
+	background: #0066ff;
+}
+
+input:checked+.slider:before {
+	transform: translateX(20px);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+	color: #fff;
+}
+
 .glow-effect {
 	position: fixed;
 	inset: 0;
@@ -218,36 +255,7 @@ h6 {
 	height: 0;
 }
 
-/* Input */
-input {
-	width: 100%;
-	padding: 12px;
-	background: rgba(50, 50, 50, 0.6);
-	border: 2px solid rgba(255, 255, 255, 0);
-	border-radius: 12px;
-	color: #fff;
-	font-size: 14px;
-	transition: all 0.3s ease;
-}
-
-input:focus {
-	outline: none;
-	border-color: #4285f4;
-	background: rgba(50, 50, 50, 0.8);
-}
-
-input:checked+.slider {
-	background: #0066ff;
-}
-
-input:checked+.slider:before {
-	transform: translateX(20px);
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-	color: #fff;
-}
-
+/* Other */
 .slider {
 	position: absolute;
 	cursor: pointer;
@@ -302,13 +310,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .filter-select:focus {
 	outline: none;
-}
-
-option {
-	border: none;
-	padding: 10px;
-	background: rgba(50, 50, 50);
-	color: #fff;
 }
 
 .success-message {
@@ -546,14 +547,14 @@ option {
 	gap: 16px;
 }
 
-/* Actions Cell */
+/* Actions cell */
 .actions-cell {
 	display: flex;
 	gap: 4px;
 	justify-content: center;
 }
 
-/* Модальное окно */
+/* Modal window */
 .modal-overlay {
 	position: fixed;
 	inset: 0;
@@ -601,7 +602,7 @@ option {
 	gap: 12px;
 }
 
-/* Формы в модальных окнах */
+/* Modal window forms */
 .form-group {
 	margin-bottom: 20px;
 }
@@ -643,13 +644,13 @@ option {
 	gap: 16px;
 }
 
-/* Карточка просмотра */
+/* View card */
 .view-field {
 	margin-bottom: 12px;
 }
 
-.label,
-label {
+label,
+.label {
 	font-size: 12px;
 	color: #aaa;
 	margin-bottom: 4px;
