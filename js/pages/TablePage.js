@@ -92,46 +92,59 @@ class TablePage extends BasePage {
 
 	renderPagination(totalItems) {
 		const totalPages = Math.ceil(totalItems / this.itemsPerPage);
-		const paginationHTML = `
-			<div class="pagination">
-				<!-- ЭТА КНОПКА ДОЛЖНА БЫТЬ СЛЕВА, ОСТАЛЬНЫЕ СПРАВА -->
-				<button class="page-btn" onclick="${this.pageName}Page.openCreateModal()">
-					<i class="fas fa-plus"></i> Add ${this.getEntityName()}
-				</button>
+		if (totalPages <= 1 && totalItems === 0) {
+			// Если нет данных, показывает только кнопку создания
+			return `
+                <div class="pagination">
+                    <button class="btn-primary" onclick="${this.pageName}Page.openCreateModal()">
+                        <i class="fas fa-plus"></i> Add ${this.getEntityName()}
+                    </button>
+                </div>
+            `;
+		}
 
-				<span class="pagination-info">
-					Showing ${((this.currentPage - 1) * this.itemsPerPage) + 1}-${Math.min(this.currentPage * this.itemsPerPage, totalItems)} of ${totalItems}
-				</span>
+		return `
+            <div class="pagination">
+                <div class="pagination-left">
+                    <button class="btn-primary" onclick="${this.pageName}Page.openCreateModal()">
+                        <i class="fas fa-plus"></i> Add ${this.getEntityName()}
+                    </button>
+                </div>
 
-				<div class="pagination-controls">
-					<button class="page-btn ${this.currentPage === 1 ? 'disabled' : ''}" 
-							${this.currentPage === 1 ? 'disabled' : ''}
-							data-page="${this.currentPage - 1}">
-						<i class="fas fa-chevron-left"></i>
-					</button>
-					
-					${Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                <div class="pagination-right">
+                    <span class="pagination-info">
+                        Showing ${((this.currentPage - 1) * this.itemsPerPage) + 1}-${Math.min(this.currentPage * this.itemsPerPage, totalItems)} of ${totalItems}
+                    </span>
+
+                    <div class="pagination-controls">
+                        <button class="page-btn ${this.currentPage === 1 ? 'disabled' : ''}" 
+                                ${this.currentPage === 1 ? 'disabled' : ''}
+                                data-page="${this.currentPage - 1}">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        
+                        ${Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
 			const page = i + 1;
 			if (page > totalPages) return '';
 			return `
-							<button class="page-btn ${this.currentPage === page ? 'active' : ''}" 
-									data-page="${page}">
-								${page}
-							</button>
-                    `;
+                                <button class="page-btn ${this.currentPage === page ? 'active' : ''}" 
+                                        data-page="${page}">
+                                    ${page}
+                                </button>
+                            `;
 		}).join('')}
-                
-                ${totalPages > 5 ? '<span class="pagination-ellipsis">...</span>' : ''}
-                
-					<button class="page-btn ${this.currentPage === totalPages ? 'disabled' : ''}" 
-							${this.currentPage === totalPages ? 'disabled' : ''}
-							data-page="${this.currentPage + 1}">
-						<i class="fas fa-chevron-right"></i>
-					</button>
-				</div>
-			</div>
-		`;
-		return paginationHTML;
+                        
+                        ${totalPages > 5 ? '<span class="pagination-ellipsis">...</span>' : ''}
+                        
+                        <button class="page-btn ${this.currentPage === totalPages ? 'disabled' : ''}" 
+                                ${this.currentPage === totalPages ? 'disabled' : ''}
+                                data-page="${this.currentPage + 1}">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
 	}
 
 	renderTable(headers, data) {
@@ -211,5 +224,9 @@ class TablePage extends BasePage {
 
 	getEntityName() {
 		return this.pageName.charAt(0).toUpperCase() + this.pageName.slice(1, -1);
+	}
+
+	openCreateModal() {
+		this.showSuccess(`Create ${this.getEntityName()} functionality will be implemented soon!`);
 	}
 }

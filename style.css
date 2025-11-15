@@ -807,3 +807,44 @@ label {
 	opacity: 0.5;
 	cursor: not-allowed;
 }
+
+.pagination {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.pagination-left {
+	display: flex;
+	align-items: center;
+}
+
+.pagination-right {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+	.pagination {
+		flex-direction: column;
+		gap: 16px;
+		align-items: stretch;
+	}
+
+	.pagination-left {
+		justify-content: center;
+	}
+
+	.pagination-right {
+		flex-direction: column;
+		gap: 12px;
+		align-items: center;
+	}
+
+	.pagination-info {
+		margin-right: 0;
+		text-align: center;
+	}
+}
