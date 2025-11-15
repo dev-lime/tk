@@ -28,6 +28,11 @@ class UsersPage extends TablePage {
         `;
 	}
 
+	async init() {
+		await super.init();
+		await this.loadData();
+	}
+
 	async loadData() {
 		try {
 			const params = new URLSearchParams({
@@ -41,7 +46,7 @@ class UsersPage extends TablePage {
 
 			if (data.status === 'success') {
 				this.renderUsersTable(data.users);
-				document.getElementById('paginationContainer').innerHTML = this.renderPagination(data.totalCount);
+				this.renderPagination(data.totalCount);
 			} else {
 				throw new Error(data.message);
 			}
@@ -63,7 +68,18 @@ class UsersPage extends TablePage {
 		];
 
 		const tableHTML = this.renderTable(headers, users);
-		document.getElementById('usersTableContainer').innerHTML = tableHTML;
+		const tableContainer = document.getElementById('usersTableContainer');
+		if (tableContainer) {
+			tableContainer.innerHTML = tableHTML;
+		}
+	}
+
+	renderPagination(totalItems) {
+		const paginationHTML = super.renderPagination(totalItems);
+		const paginationContainer = document.getElementById('paginationContainer');
+		if (paginationContainer) {
+			paginationContainer.innerHTML = paginationHTML;
+		}
 	}
 
 	renderTableRow(user) {
@@ -195,13 +211,33 @@ class UsersPage extends TablePage {
         `;
 	}
 
+	renderUserEditFooter(user) {
+		return `
+            <button class="btn-secondary" onclick="usersPage.closeModal()">Cancel</button>
+            <button class="btn-primary" onclick="usersPage.updateUser(${user.user_id})">Save Changes</button>
+        `;
+	}
+
+	toggleRoleFields(role) {
+		const checkbox = document.querySelector(`input[name="roles"][value="${role}"]`);
+		if (role === 'client') {
+			document.getElementById('clientFields').style.display = checkbox.checked ? 'block' : 'none';
+		} else if (role === 'driver') {
+			document.getElementById('driverFields').style.display = checkbox.checked ? 'block' : 'none';
+			const licenseInput = document.getElementById('editLicenseNumber');
+			if (checkbox.checked && !licenseInput.value) {
+				licenseInput.focus();
+			}
+		}
+	}
+
 	async updateUser(userId) {
 		try {
 			this.showLoading();
 
 			const phone = document.getElementById('editPhone').value;
 
-			// Валидация телефона
+			// Phone validation
 			if (phone && !this.isValidPhone(phone)) {
 				throw new Error('Phone number format is invalid. Use format: +1234567890 or 1234567 (7-20 digits)');
 			}
@@ -253,79 +289,8 @@ class UsersPage extends TablePage {
 	}
 
 	isValidPhone(phone) {
-		// Регулярное выражение для проверки телефона: необязательный +, затем 7-20 цифр
 		const phoneRegex = /^\+?[0-9]{7,20}$/;
 		return phoneRegex.test(phone);
-	}
-
-	renderUserEditFooter(user) {
-		return `
-            <button class="btn-secondary" onclick="usersPage.closeModal()">Cancel</button>
-            <button class="btn-primary" onclick="usersPage.updateUser(${user.user_id})">Save Changes</button>
-        `;
-	}
-
-	toggleRoleFields(role) {
-		const checkbox = document.querySelector(`input[name="roles"][value="${role}"]`);
-		if (role === 'client') {
-			document.getElementById('clientFields').style.display = checkbox.checked ? 'block' : 'none';
-		} else if (role === 'driver') {
-			document.getElementById('driverFields').style.display = checkbox.checked ? 'block' : 'none';
-			const licenseInput = document.getElementById('editLicenseNumber');
-			if (checkbox.checked && !licenseInput.value) {
-				licenseInput.focus();
-			}
-		}
-	}
-
-	async updateUser(userId) {
-		try {
-			this.showLoading();
-
-			const formData = {
-				user_id: userId,
-				username: document.getElementById('editUsername').value,
-				email: document.getElementById('editEmail').value,
-				first_name: document.getElementById('editFirstName').value,
-				last_name: document.getElementById('editLastName').value,
-				middle_name: document.getElementById('editMiddleName').value,
-				phone: document.getElementById('editPhone').value,
-				roles: Array.from(document.querySelectorAll('input[name="roles"]:checked')).map(cb => cb.value)
-			};
-
-			// Add role-specific data
-			if (formData.roles.includes('client')) {
-				formData.company_name = document.getElementById('editCompanyName').value;
-			}
-			if (formData.roles.includes('driver')) {
-				formData.license_number = document.getElementById('editLicenseNumber').value;
-				if (!formData.license_number.trim()) {
-					throw new Error('License number is required for drivers');
-				}
-			}
-
-			if (!formData.username.trim() || !formData.first_name.trim() || !formData.last_name.trim()) {
-				throw new Error('Username, first name and last name are required');
-			}
-
-			const response = await this.apiCall('api/update_user.php', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(formData)
-			});
-
-			if (response.status === 'success') {
-				this.showSuccess('User updated successfully');
-				this.closeModal();
-				this.loadData();
-			} else {
-				throw new Error(response.message);
-			}
-		} catch (error) {
-			this.showError('Failed to update user: ' + error.message);
-		} finally {
-			this.hideLoading();
-		}
 	}
 
 	handleFilter() {
@@ -359,6 +324,10 @@ class UsersPage extends TablePage {
 		} catch (error) {
 			this.showError('Failed to delete user: ' + error.message);
 		}
+	}
+
+	openCreateModal() {
+		this.showSuccess('Create user functionality will be implemented soon!');
 	}
 }
 

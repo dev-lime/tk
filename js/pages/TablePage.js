@@ -90,10 +90,18 @@ class TablePage extends BasePage {
 		this.loadData();
 	}
 
+	safeSetInnerHTML(elementId, html) {
+		const element = document.getElementById(elementId);
+		if (element) {
+			element.innerHTML = html;
+		} else {
+			console.warn(`Element with id '${elementId}' not found`);
+		}
+	}
+
 	renderPagination(totalItems) {
 		const totalPages = Math.ceil(totalItems / this.itemsPerPage);
 		if (totalPages <= 1 && totalItems === 0) {
-			// Если нет данных, показывает только кнопку создания
 			return `
                 <div class="pagination">
                     <button class="btn-primary" onclick="${this.pageName}Page.openCreateModal()">
