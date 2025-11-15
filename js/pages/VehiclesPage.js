@@ -10,18 +10,17 @@ class VehiclesPage extends TablePage {
                 <h1 class="content-title">Vehicles Management</h1>
             </div>
 
-			<div class="filter-group">
-				<select id="statusFilter" class="filter-select">
-					<option value="">All Statuses</option>
-					<option value="available">Available</option>
-					<option value="in_service">In Service</option>
-					<option value="maintenance">Maintenance</option>
-					<option value="unavailable">Unavailable</option>
-				</select>
-				<input type="text" id="searchVehicles" placeholder="Search vehicles..." class="filter-input">
-				<button class="reset-filters">Reset</button>
-				<button class="filter-btn">Apply Filters</button>
-			</div>
+            <div class="filter-group">
+                <select id="statusFilter" class="filter-select">
+                    <option value="">All Statuses</option>
+                    <option value="available">Available</option>
+                    <option value="in_use">In Use</option>
+                    <option value="maintenance">Maintenance</option>
+                </select>
+                <input type="text" id="searchVehicles" placeholder="Search vehicles..." class="filter-input">
+                <button class="reset-filters">Reset</button>
+                <button class="filter-btn">Apply Filters</button>
+            </div>
 
             <div id="vehiclesTableContainer"></div>
             <div id="paginationContainer"></div>
@@ -57,6 +56,7 @@ class VehiclesPage extends TablePage {
 			{ field: 'model', label: 'Model' },
 			{ field: 'capacity_kg', label: 'Capacity (kg)' },
 			{ field: 'status', label: 'Status' },
+			{ field: 'created_at', label: 'Created' },
 			{ field: 'actions', label: 'Actions' }
 		];
 
@@ -65,15 +65,16 @@ class VehiclesPage extends TablePage {
 	}
 
 	renderTableRow(vehicle) {
-		const statusClass = this.getStatusClass(vehicle.status);
+		const statusClass = this.getVehicleStatusClass(vehicle.status);
 
 		return `
             <tr>
                 <td>${vehicle.vehicle_id}</td>
                 <td>${vehicle.plate_number}</td>
                 <td>${vehicle.model}</td>
-                <td>${vehicle.capacity_kg} kg</td>
+                <td>${vehicle.capacity_kg}</td>
                 <td><span class="status-badge ${statusClass}">${vehicle.status}</span></td>
+                <td>${new Date(vehicle.created_at).toLocaleDateString()}</td>
                 <td class="actions-cell">
                     <button class="btn-icon" onclick="vehiclesPage.editVehicle(${vehicle.vehicle_id})" title="Edit">
                         <i class="fas fa-edit"></i>
@@ -86,14 +87,130 @@ class VehiclesPage extends TablePage {
         `;
 	}
 
-	getStatusClass(status) {
+	getVehicleStatusClass(status) {
+		const statusClasses = {
+			'available': 'success',
+			'in_use': 'warning',
+			'maintenance': 'error'
+		};
+		return statusClasses[status] || 'default';
+	}
+
+	async editVehicle(vehicleId) {
+		try {
+			this.showLoading();
+			const data = await this.apiCall(`api/get_vehicle.php?vehicle_id=${vehicleId}`);
+
+			if (data.status === 'success') {
+				const vehicle = data.vehicle;
+				const content = this.renderVehicleEditForm(vehicle);
+				const footer = this.renderVehicleEditFooter(vehicle);
+
+				this.showModal(`Edit Vehicle: ${vehicle.model}`, content, footer);
+			} else {
+				throw new Error(data.message);
+			}
+		} catch (error) {
+			this.showError('Failed to load vehicle for editing: ' + error.message);
+		} finally {
+			this.hideLoading();
+		}
+	}
+
+	renderVehicleEditForm(vehicle) {
+		const statusOptions = [
+			{ value: 'available', label: 'Available' },
+			{ value: 'in_service', label: 'In Service' },
+			{ value: 'maintenance', label: 'Maintenance' },
+			{ value: 'unavailable', label: 'Unavailable' }
+		];
+
+		return `
+            <div class="edit-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Plate Number *</label>
+                        <input type="text" class="form-input" id="editPlateNumber" value="${vehicle.plate_number || ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Model *</label>
+                        <input type="text" class="form-input" id="editModel" value="${vehicle.model || ''}" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Capacity (kg) *</label>
+                        <input type="number" class="form-input" id="editCapacity" value="${vehicle.capacity_kg || ''}" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="editStatus">
+                            ${statusOptions.map(option => `
+                                <option value="${option.value}" ${vehicle.status === option.value ? 'selected' : ''}>
+                                    ${option.label}
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+                </div>
+
+                <div id="editFormMessages"></div>
+            </div>
+        `;
+	}
+
+	renderVehicleEditFooter(vehicle) {
+		return `
+            <button class="btn-secondary" onclick="vehiclesPage.closeModal()">Cancel</button>
+            <button class="btn-primary" onclick="vehiclesPage.updateVehicle(${vehicle.vehicle_id})">Save Changes</button>
+        `;
+	}
+
+	getVehicleStatusClass(status) {
 		const statusClasses = {
 			'available': 'success',
 			'in_service': 'warning',
-			'maintenance': 'info',
+			'maintenance': 'error',
 			'unavailable': 'error'
 		};
 		return statusClasses[status] || 'default';
+	}
+
+	async updateVehicle(vehicleId) {
+		try {
+			this.showLoading();
+
+			const formData = {
+				vehicle_id: vehicleId,
+				plate_number: document.getElementById('editPlateNumber').value,
+				model: document.getElementById('editModel').value,
+				capacity_kg: document.getElementById('editCapacity').value,
+				status: document.getElementById('editStatus').value
+			};
+
+			if (!formData.plate_number.trim() || !formData.model.trim() || !formData.capacity_kg) {
+				throw new Error('Plate number, model and capacity are required');
+			}
+
+			const response = await this.apiCall('api/update_vehicle.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(formData)
+			});
+
+			if (response.status === 'success') {
+				this.showSuccess('Vehicle updated successfully');
+				this.closeModal();
+				this.loadData();
+			} else {
+				throw new Error(response.message);
+			}
+		} catch (error) {
+			this.showError('Failed to update vehicle: ' + error.message);
+		} finally {
+			this.hideLoading();
+		}
 	}
 
 	handleFilter() {
@@ -108,33 +225,11 @@ class VehiclesPage extends TablePage {
 		this.loadData();
 	}
 
-	openCreateModal() {
-		this.showSuccess('Create vehicle functionality will be implemented soon!');
-	}
-
-	editVehicle(vehicleId) {
-		this.showSuccess(`Edit vehicle ${vehicleId} functionality will be implemented soon!`);
-	}
-
-	async deleteVehicle(vehicleId) {
+	deleteVehicle(vehicleId) {
 		if (!confirm('Are you sure you want to delete this vehicle?')) return;
 
-		try {
-			const data = await this.apiCall('api/delete_vehicle.php', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ vehicle_id: vehicleId })
-			});
-
-			if (data.status === 'success') {
-				this.showSuccess('Vehicle deleted successfully');
-				this.loadData();
-			} else {
-				throw new Error(data.message);
-			}
-		} catch (error) {
-			this.showError('Failed to delete vehicle: ' + error.message);
-		}
+		// Заглушка для удаления
+		this.showSuccess(`Delete vehicle ${vehicleId} functionality will be implemented soon!`);
 	}
 }
 

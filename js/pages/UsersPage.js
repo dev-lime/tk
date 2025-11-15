@@ -92,6 +92,178 @@ class UsersPage extends TablePage {
         `;
 	}
 
+	async editUser(userId) {
+		try {
+			this.showLoading();
+			const data = await this.apiCall(`api/get_user.php?user_id=${userId}`);
+
+			if (data.status === 'success') {
+				const user = data.user;
+				const content = this.renderUserEditForm(user);
+				const footer = this.renderUserEditFooter(user);
+
+				this.showModal(`Edit User: ${user.username}`, content, footer);
+			} else {
+				throw new Error(data.message);
+			}
+		} catch (error) {
+			this.showError('Failed to load user for editing: ' + error.message);
+		} finally {
+			this.hideLoading();
+		}
+	}
+
+	renderUserEditForm(user) {
+		const roleOptions = ['admin', 'dispatcher', 'driver', 'client'];
+
+		return `
+            <div class="edit-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Username *</label>
+                        <input type="text" class="form-input" id="editUsername" value="${user.username || ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="editEmail" value="${user.email || ''}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">First Name *</label>
+                        <input type="text" class="form-input" id="editFirstName" value="${user.first_name || ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name *</label>
+                        <input type="text" class="form-input" id="editLastName" value="${user.last_name || ''}" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Middle Name</label>
+                        <input type="text" class="form-input" id="editMiddleName" value="${user.middle_name || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-input" id="editPhone" value="${user.phone || ''}" 
+                               pattern="^\+?[0-9]{7,20}$" title="Phone number format: +1234567890">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Roles</label>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 8px;">
+                        ${roleOptions.map(role => `
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" name="roles" value="${role}" 
+                                    ${user.roles.includes(role) ? 'checked' : ''}
+                                    onchange="usersPage.toggleRoleFields('${role}')">
+                                ${role.charAt(0).toUpperCase() + role.slice(1)}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- Client specific fields -->
+                <div id="clientFields" style="${user.roles.includes('client') ? '' : 'display: none;'}">
+                    <div class="form-group">
+                        <label class="form-label">Company Name</label>
+                        <input type="text" class="form-input" id="editCompanyName" value="${user.company_name || ''}">
+                    </div>
+                </div>
+
+                <!-- Driver specific fields -->
+                <div id="driverFields" style="${user.roles.includes('driver') ? '' : 'display: none;'}">
+                    <div class="form-group">
+                        <label class="form-label">License Number *</label>
+                        <input type="text" class="form-input" id="editLicenseNumber" value="${user.license_number || ''}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div style="color: #666; font-size: 12px;">
+                        <i class="fas fa-info-circle"></i>
+                        Created: ${new Date(user.created_at).toLocaleString()}
+                    </div>
+                </div>
+
+                <div id="editFormMessages"></div>
+            </div>
+        `;
+	}
+
+	renderUserEditFooter(user) {
+		return `
+            <button class="btn-secondary" onclick="usersPage.closeModal()">Cancel</button>
+            <button class="btn-primary" onclick="usersPage.updateUser(${user.user_id})">Save Changes</button>
+        `;
+	}
+
+	toggleRoleFields(role) {
+		const checkbox = document.querySelector(`input[name="roles"][value="${role}"]`);
+		if (role === 'client') {
+			document.getElementById('clientFields').style.display = checkbox.checked ? 'block' : 'none';
+		} else if (role === 'driver') {
+			document.getElementById('driverFields').style.display = checkbox.checked ? 'block' : 'none';
+			const licenseInput = document.getElementById('editLicenseNumber');
+			if (checkbox.checked && !licenseInput.value) {
+				licenseInput.focus();
+			}
+		}
+	}
+
+	async updateUser(userId) {
+		try {
+			this.showLoading();
+
+			const formData = {
+				user_id: userId,
+				username: document.getElementById('editUsername').value,
+				email: document.getElementById('editEmail').value,
+				first_name: document.getElementById('editFirstName').value,
+				last_name: document.getElementById('editLastName').value,
+				middle_name: document.getElementById('editMiddleName').value,
+				phone: document.getElementById('editPhone').value,
+				roles: Array.from(document.querySelectorAll('input[name="roles"]:checked')).map(cb => cb.value)
+			};
+
+			// Add role-specific data
+			if (formData.roles.includes('client')) {
+				formData.company_name = document.getElementById('editCompanyName').value;
+			}
+			if (formData.roles.includes('driver')) {
+				formData.license_number = document.getElementById('editLicenseNumber').value;
+				if (!formData.license_number.trim()) {
+					throw new Error('License number is required for drivers');
+				}
+			}
+
+			if (!formData.username.trim() || !formData.first_name.trim() || !formData.last_name.trim()) {
+				throw new Error('Username, first name and last name are required');
+			}
+
+			const response = await this.apiCall('api/update_user.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(formData)
+			});
+
+			if (response.status === 'success') {
+				this.showSuccess('User updated successfully');
+				this.closeModal();
+				this.loadData();
+			} else {
+				throw new Error(response.message);
+			}
+		} catch (error) {
+			this.showError('Failed to update user: ' + error.message);
+		} finally {
+			this.hideLoading();
+		}
+	}
+
 	handleFilter() {
 		const search = document.getElementById('searchUsers').value;
 		const role = document.getElementById('roleFilter').value;
@@ -102,11 +274,6 @@ class UsersPage extends TablePage {
 
 		this.currentPage = 1;
 		this.loadData();
-	}
-
-	editUser(userId) {
-		// Заглушка для редактирования
-		this.showSuccess(`Edit user ${userId} functionality will be implemented soon!`);
 	}
 
 	async deleteUser(userId) {
