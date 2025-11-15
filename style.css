@@ -41,10 +41,6 @@ h6 {
 	border-radius: 8px;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-	color: #fff;
-}
-
 .glow-effect {
 	position: fixed;
 	top: 0;
@@ -227,6 +223,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	height: 0;
 }
 
+/* Input */
 input {
 	width: 100%;
 	padding: 12px;
@@ -242,6 +239,18 @@ input:focus {
 	outline: none;
 	border-color: #4285f4;
 	background: rgba(50, 50, 50, 0.8);
+}
+
+input:checked+.slider {
+	background: #0066ff;
+}
+
+input:checked+.slider:before {
+	transform: translateX(20px);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+	color: #fff;
 }
 
 .slider {
@@ -266,14 +275,6 @@ input:focus {
 	background-color: white;
 	transition: .4s;
 	border-radius: 50%;
-}
-
-input:checked+.slider {
-	background: #0066ff;
-}
-
-input:checked+.slider:before {
-	transform: translateX(20px);
 }
 
 .main-content {
@@ -435,10 +436,8 @@ option {
 	color: #ccc;
 }
 
-
-
 /* Buttons */
-.btn-icon {
+.btn-action {
 	background: rgba(255, 255, 255, 0.05);
 	height: 36px;
 	width: 36px;
@@ -450,15 +449,15 @@ option {
 	transition: all 0.3s ease;
 }
 
-.btn-icon:hover {
+.btn-action:hover {
 	background: rgba(255, 255, 255, 0.1);
 }
 
-.btn-icon.danger {
+.btn-action.danger {
 	color: #ea4335;
 }
 
-.btn-icon.danger:hover {
+.btn-action.danger:hover {
 	background: rgba(234, 67, 53, 0.1);
 }
 

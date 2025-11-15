@@ -82,13 +82,13 @@ class OrdersPage extends TablePage {
                 <td>$${order.price}</td>
                 <td>${new Date(order.created_at).toLocaleDateString()}</td>
                 <td class="actions-cell">
-                    <button class="btn-icon" onclick="ordersPage.viewOrder(${order.order_id})" title="View">
+                    <button class="btn-action" onclick="ordersPage.viewOrder(${order.order_id})" title="View">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="btn-icon" onclick="ordersPage.editOrder(${order.order_id})" title="Edit">
+                    <button class="btn-action" onclick="ordersPage.editOrder(${order.order_id})" title="Edit">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn-icon danger" onclick="ordersPage.cancelOrder(${order.order_id})" title="Cancel">
+                    <button class="btn-action danger" onclick="ordersPage.cancelOrder(${order.order_id})" title="Cancel">
                         <i class="fas fa-times"></i>
                     </button>
                 </td>

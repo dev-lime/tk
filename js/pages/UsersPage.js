@@ -81,10 +81,10 @@ class UsersPage extends TablePage {
                 <td>${roles}</td>
                 <td>${new Date(user.created_at).toLocaleDateString()}</td>
                 <td class="actions-cell">
-                    <button class="btn-icon" onclick="usersPage.editUser(${user.user_id})" title="Edit">
+                    <button class="btn-action" onclick="usersPage.editUser(${user.user_id})" title="Edit">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn-icon danger" onclick="usersPage.deleteUser(${user.user_id})" title="Delete">
+                    <button class="btn-action danger" onclick="usersPage.deleteUser(${user.user_id})" title="Delete">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>

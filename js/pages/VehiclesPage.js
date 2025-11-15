@@ -76,10 +76,10 @@ class VehiclesPage extends TablePage {
                 <td><span class="status-badge ${statusClass}">${vehicle.status}</span></td>
                 <td>${new Date(vehicle.created_at).toLocaleDateString()}</td>
                 <td class="actions-cell">
-                    <button class="btn-icon" onclick="vehiclesPage.editVehicle(${vehicle.vehicle_id})" title="Edit">
+                    <button class="btn-action" onclick="vehiclesPage.editVehicle(${vehicle.vehicle_id})" title="Edit">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn-icon danger" onclick="vehiclesPage.deleteVehicle(${vehicle.vehicle_id})" title="Delete">
+                    <button class="btn-action danger" onclick="vehiclesPage.deleteVehicle(${vehicle.vehicle_id})" title="Delete">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
