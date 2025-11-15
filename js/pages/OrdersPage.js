@@ -578,7 +578,7 @@ class OrdersPage extends TablePage {
 		return `
             <div class="edit-form">
                 <div class="form-group">
-                    <label class="form-label">Client *</label>
+                    <label>Client *</label>
                     <select class="form-select" id="createClientId" required>
                         <option value="">Select Client</option>
                     </select>
@@ -586,47 +586,47 @@ class OrdersPage extends TablePage {
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Origin *</label>
-                        <input type="text" class="form-input" id="createOrigin" required>
+                        <label>Origin *</label>
+                        <input type="text" id="createOrigin" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Destination *</label>
-                        <input type="text" class="form-input" id="createDestination" required>
+                        <label>Destination *</label>
+                        <input type="text" id="createDestination" required>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Price ($)</label>
-                        <input type="number" class="form-input" id="createPrice" step="0.01" min="0">
+                        <label>Price ($)</label>
+                        <input type="number" id="createPrice" step="0.01" min="0">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Weight (kg)</label>
-                        <input type="number" class="form-input" id="createWeight" min="0">
+                        <label>Weight (kg)</label>
+                        <input type="number" id="createWeight" min="0">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Driver</label>
+                    <label>Driver</label>
                     <select class="form-select" id="createDriverId">
                         <option value="">No driver assigned</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Vehicle</label>
+                    <label>Vehicle</label>
                     <select class="form-select" id="createVehicleId">
                         <option value="">No vehicle assigned</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Delivery Date</label>
-                    <input type="date" class="form-input" id="createDeliveryDate">
+                    <label>Delivery Date</label>
+                    <input type="date" id="createDeliveryDate">
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Cargo Description</label>
+                    <label>Cargo Description</label>
                     <textarea class="form-textarea" id="createDescription" rows="3"></textarea>
                 </div>
 

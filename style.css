@@ -607,13 +607,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	margin-bottom: 20px;
 }
 
-.form-label {
-	display: block;
-	margin-bottom: 6px;
-	font-weight: 500;
-	color: #333;
-}
-
 .form-select,
 .form-textarea {
 	width: 100%;

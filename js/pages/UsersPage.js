@@ -340,34 +340,34 @@ class UsersPage extends TablePage {
             <div class="edit-form">
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Username *</label>
-                        <input type="text" class="form-input" id="createUsername" required>
+                        <label>Username *</label>
+                        <input type="text" id="createUsername" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-input" id="createEmail">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">First Name *</label>
-                        <input type="text" class="form-input" id="createFirstName" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Last Name *</label>
-                        <input type="text" class="form-input" id="createLastName" required>
+                        <label>Email</label>
+                        <input type="email" id="createEmail">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Middle Name</label>
-                        <input type="text" class="form-input" id="createMiddleName">
+                        <label>First Name *</label>
+                        <input type="text" id="createFirstName" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Phone</label>
-                        <input type="tel" class="form-input" id="createPhone" 
+                        <label>Last Name *</label>
+                        <input type="text" id="createLastName" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Middle Name</label>
+                        <input type="text" id="createMiddleName">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="createPhone" 
                                placeholder="+1234567890 or 1234567">
                         <small style="color: #666; font-size: 12px;">Format: +1234567890 or 1234567 (7-20 digits)</small>
                     </div>
@@ -375,17 +375,17 @@ class UsersPage extends TablePage {
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Password *</label>
-                        <input type="password" class="form-input" id="createPassword" required>
+                        <label>Password *</label>
+                        <input type="password" id="createPassword" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Confirm Password *</label>
-                        <input type="password" class="form-input" id="createPasswordConfirm" required>
+                        <label>Confirm Password *</label>
+                        <input type="password" id="createPasswordConfirm" required>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Roles</label>
+                    <label>Roles</label>
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 8px;">
                         ${roleOptions.map(role => `
                             <label style="display: flex; align-items: center; gap: 8px;">
@@ -400,16 +400,16 @@ class UsersPage extends TablePage {
                 <!-- Client specific fields -->
                 <div id="createClientFields" style="display: none;">
                     <div class="form-group">
-                        <label class="form-label">Company Name</label>
-                        <input type="text" class="form-input" id="createCompanyName">
+                        <label>Company Name</label>
+                        <input type="text" id="createCompanyName">
                     </div>
                 </div>
 
                 <!-- Driver specific fields -->
                 <div id="createDriverFields" style="display: none;">
                     <div class="form-group">
-                        <label class="form-label">License Number *</label>
-                        <input type="text" class="form-input" id="createLicenseNumber">
+                        <label>License Number *</label>
+                        <input type="text" id="createLicenseNumber">
                     </div>
                 </div>
 
