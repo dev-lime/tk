@@ -152,11 +152,11 @@ class OrdersPage extends TablePage {
             <div class="view-card">
                 <div class="form-row">
                     <div class="view-field">
-                        <div class="view-label">Order ID</div>
+                        <div class="label">Order ID</div>
                         <div class="view-value">#${order.order_id}</div>
                     </div>
                     <div class="view-field">
-                        <div class="view-label">Status</div>
+                        <div class="label">Status</div>
                         <div class="view-value">
                             <span class="status-badge ${statusClass}">${order.status}</span>
                         </div>
@@ -164,7 +164,7 @@ class OrdersPage extends TablePage {
                 </div>
                 
                 <div class="view-field">
-                    <div class="view-label">Client</div>
+                    <div class="label">Client</div>
                     <div class="view-value">
                         <div>${order.client_name}</div>
                         ${order.company_name ? `<div>Company: ${order.company_name}</div>` : ''}
@@ -175,36 +175,36 @@ class OrdersPage extends TablePage {
                 
                 ${order.dispatcher_name ? `
                 <div class="view-field">
-                    <div class="view-label" style="color: #6f42c1; font-weight: 600;">Dispatcher</div>
+                    <div class="label" style="color: #6f42c1; font-weight: 600;">Dispatcher</div>
                     <div class="view-value">${order.dispatcher_name}</div>
                 </div>
                 ` : ''}
                 
                 <div class="form-row">
                     <div class="view-field">
-                        <div class="view-label">Origin</div>
+                        <div class="label">Origin</div>
                         <div class="view-value">${order.origin}</div>
                     </div>
                     <div class="view-field">
-                        <div class="view-label">Destination</div>
+                        <div class="label">Destination</div>
                         <div class="view-value">${order.destination}</div>
                     </div>
                 </div>
                 
                 <div class="form-row">
                     <div class="view-field">
-                        <div class="view-label">Price</div>
+                        <div class="label">Price</div>
                         <div class="view-value">$${parseFloat(order.price || 0).toFixed(2)}</div>
                     </div>
                     <div class="view-field">
-                        <div class="view-label">Weight</div>
+                        <div class="label">Weight</div>
                         <div class="view-value">${order.weight ? order.weight + ' kg' : '-'}</div>
                     </div>
                 </div>
                 
                 ${order.driver_name ? `
                 <div class="view-field">
-                    <div class="view-label" style="color: #28a745; font-weight: 600;">Assigned Driver</div>
+                    <div class="label" style="color: #28a745; font-weight: 600;">Assigned Driver</div>
                     <div style="border-radius: 6px; margin-top: 8px;">
                         <div>Driver: ${order.driver_name}</div>
                         ${order.driver_license ? `<div>License: ${order.driver_license}</div>` : ''}
@@ -214,7 +214,7 @@ class OrdersPage extends TablePage {
                 
                 ${order.vehicle_model ? `
                 <div class="view-field">
-                    <div class="view-label" style="color: #fd7e14; font-weight: 600;">Assigned Vehicle</div>
+                    <div class="label" style="color: #fd7e14; font-weight: 600;">Assigned Vehicle</div>
                     <div style="border-radius: 6px; margin-top: 8px;">
                         <div>Model: ${order.vehicle_model}</div>
                         <div>License Plate: ${order.vehicle_plate}</div>
@@ -230,19 +230,19 @@ class OrdersPage extends TablePage {
                 
                 ${order.description ? `
                 <div class="view-field">
-                    <div class="view-label">Cargo Description</div>
+                    <div class="label">Cargo Description</div>
                     <div class="view-value">${order.description}</div>
                 </div>
                 ` : ''}
                 
                 <div class="form-row">
                     <div class="view-field">
-                        <div class="view-label">Created</div>
+                        <div class="label">Created</div>
                         <div class="view-value">${new Date(order.created_at).toLocaleString()}</div>
                     </div>
                     ${order.updated_at ? `
                     <div class="view-field">
-                        <div class="view-label">Last Updated</div>
+                        <div class="label">Last Updated</div>
                         <div class="view-value">${new Date(order.updated_at).toLocaleString()}</div>
                     </div>
                     ` : ''}
@@ -250,14 +250,14 @@ class OrdersPage extends TablePage {
                 
                 ${order.delivery_date ? `
                 <div class="view-field">
-                    <div class="view-label">Delivery Date</div>
+                    <div class="label">Delivery Date</div>
                     <div class="view-value">${new Date(order.delivery_date).toLocaleDateString()}</div>
                 </div>
                 ` : ''}
                 
                 ${order.history && order.history.length > 0 ? `
                 <div class="view-field">
-                    <div class="view-label">Order History</div>
+                    <div class="label">Order History</div>
                     <div style="padding: 12px; border-radius: 6px; margin-top: 8px; max-height: 200px; overflow-y: auto;">
                         ${order.history.map(entry => `
                             <div style="padding: 4px 0; border-bottom: 1px solid #e9ecef;">
