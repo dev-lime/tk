@@ -707,22 +707,23 @@ option {
 	color: #333;
 }
 
-.form-input,
 .form-select,
 .form-textarea {
 	width: 100%;
 	padding: 12px;
-	border-radius: 6px;
+	background: rgba(50, 50, 50, 0.6);
+	border: 2px solid rgba(255, 255, 255, 0);
+	border-radius: 12px;
+	color: #fff;
 	font-size: 14px;
-	transition: border-color 0.3s;
+	transition: all 0.3s ease;
 }
 
-.form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
 	outline: none;
-	border-color: #007bff;
-	box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+	border-color: #4285f4;
+	background: rgba(50, 50, 50, 0.8);
 }
 
 .form-textarea {
@@ -753,4 +754,56 @@ option {
 	font-size: 16px;
 	color: #fff;
 	margin: 0;
+}
+
+.label {
+	font-size: 12px;
+	color: #aaa;
+	margin-bottom: 4px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.value {
+	font-size: 16px;
+	color: #fff;
+	margin: 0;
+}
+
+.btn-primary {
+	background: rgba(66, 133, 244, 0.2);
+	border: none;
+	color: #8ab4f8;
+	padding: 10px 16px;
+	border-radius: 12px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+	background: rgba(66, 133, 244, 0.3);
+}
+
+.btn-secondary {
+	background: rgba(255, 255, 255, 0.05);
+	border: none;
+	color: #ccc;
+	padding: 8px 12px;
+	border-radius: 12px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.btn-secondary:hover:not(.disabled) {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-secondary.active {
+	background: rgba(66, 133, 244, 0.3);
+	color: #8ab4f8;
+}
+
+.btn-secondary.disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
 }
