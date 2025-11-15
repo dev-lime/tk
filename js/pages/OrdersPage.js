@@ -565,7 +565,166 @@ class OrdersPage extends TablePage {
 			this.showError('Failed to cancel order: ' + error.message);
 		}
 	}
+
+	openCreateModal() {
+		const content = this.renderOrderCreateForm();
+		const footer = this.renderOrderCreateFooter();
+
+		this.showModal('Create New Order', content, footer);
+		this.loadCreateFormData();
+	}
+
+	renderOrderCreateForm() {
+		return `
+            <div class="edit-form">
+                <div class="form-group">
+                    <label class="form-label">Client *</label>
+                    <select class="form-select" id="createClientId" required>
+                        <option value="">Select Client</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Origin *</label>
+                        <input type="text" class="form-input" id="createOrigin" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Destination *</label>
+                        <input type="text" class="form-input" id="createDestination" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Price ($)</label>
+                        <input type="number" class="form-input" id="createPrice" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Weight (kg)</label>
+                        <input type="number" class="form-input" id="createWeight" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Driver</label>
+                    <select class="form-select" id="createDriverId">
+                        <option value="">No driver assigned</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Vehicle</label>
+                    <select class="form-select" id="createVehicleId">
+                        <option value="">No vehicle assigned</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Delivery Date</label>
+                    <input type="date" class="form-input" id="createDeliveryDate">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Cargo Description</label>
+                    <textarea class="form-textarea" id="createDescription" rows="3"></textarea>
+                </div>
+
+                <div id="createFormMessages"></div>
+            </div>
+        `;
+	}
+
+	renderOrderCreateFooter() {
+		return `
+            <button class="btn-secondary" onclick="ordersPage.closeModal()">Cancel</button>
+            <button class="btn-primary" onclick="ordersPage.createOrder()">Create Order</button>
+        `;
+	}
+
+	async loadCreateFormData() {
+		try {
+			// Загружаем клиентов
+			const clientsData = await this.apiCall('api/get_users.php?role=client&limit=1000');
+			if (clientsData.status === 'success') {
+				const clientsSelect = document.getElementById('createClientId');
+				clientsSelect.innerHTML = '<option value="">Select Client</option>' +
+					clientsData.users.map(client => `
+                        <option value="${client.user_id}">
+                            ${client.first_name} ${client.last_name} 
+                            ${client.specialized_info?.client?.company_name ? `(${client.specialized_info.client.company_name})` : ''}
+                        </option>
+                    `).join('');
+			}
+
+			// Загружаем водителей
+			const driversData = await this.apiCall('api/get_drivers.php?limit=1000');
+			if (driversData.status === 'success') {
+				const driversSelect = document.getElementById('createDriverId');
+				driversSelect.innerHTML = '<option value="">No driver assigned</option>' +
+					driversData.drivers.map(driver => `
+                        <option value="${driver.user_id}">
+                            ${driver.first_name} ${driver.last_name} (${driver.license_number})
+                        </option>
+                    `).join('');
+			}
+
+			// Загружаем транспортные средства
+			const vehiclesData = await this.apiCall('api/get_vehicles.php?limit=1000');
+			if (vehiclesData.status === 'success') {
+				const vehiclesSelect = document.getElementById('createVehicleId');
+				vehiclesSelect.innerHTML = '<option value="">No vehicle assigned</option>' +
+					vehiclesData.vehicles.map(vehicle => `
+                        <option value="${vehicle.vehicle_id}">
+                            ${vehicle.model} (${vehicle.plate_number}) - ${vehicle.capacity_kg}kg
+                        </option>
+                    `).join('');
+			}
+		} catch (error) {
+			console.error('Error loading create form data:', error);
+		}
+	}
+
+	async createOrder() {
+		try {
+			this.showLoading();
+
+			const formData = {
+				client_id: document.getElementById('createClientId').value,
+				origin: document.getElementById('createOrigin').value,
+				destination: document.getElementById('createDestination').value,
+				cargo_description: document.getElementById('createDescription').value,
+				weight_kg: document.getElementById('createWeight').value || null,
+				price: document.getElementById('createPrice').value || null,
+				driver_id: document.getElementById('createDriverId').value || null,
+				vehicle_id: document.getElementById('createVehicleId').value || null,
+				delivery_date: document.getElementById('createDeliveryDate').value || null
+			};
+
+			// Валидация
+			if (!formData.client_id || !formData.origin.trim() || !formData.destination.trim()) {
+				throw new Error('Client, origin and destination are required');
+			}
+
+			const response = await this.apiCall('api/create_order.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(formData)
+			});
+
+			if (response.status === 'success') {
+				this.showSuccess('Order created successfully');
+				this.closeModal();
+				this.loadData();
+			} else {
+				throw new Error(response.message);
+			}
+		} catch (error) {
+			this.showError('Failed to create order: ' + error.message);
+		} finally {
+			this.hideLoading();
+		}
+	}
 }
 
-// Создаем глобальный экземпляр
 window.ordersPage = new OrdersPage();

@@ -245,6 +245,96 @@ class VehiclesPage extends TablePage {
 			this.showError('Failed to delete vehicle: ' + error.message);
 		}
 	}
+
+	openCreateModal() {
+		const content = this.renderVehicleCreateForm();
+		const footer = this.renderVehicleCreateFooter();
+
+		this.showModal('Create New Vehicle', content, footer);
+	}
+
+	renderVehicleCreateForm() {
+		const statusOptions = [
+			{ value: 'available', label: 'Available' },
+			{ value: 'in_service', label: 'In Service' },
+			{ value: 'maintenance', label: 'Maintenance' },
+			{ value: 'unavailable', label: 'Unavailable' }
+		];
+
+		return `
+            <div class="edit-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Plate Number *</label>
+                        <input type="text" class="form-input" id="createPlateNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Model *</label>
+                        <input type="text" class="form-input" id="createModel" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Capacity (kg) *</label>
+                        <input type="number" class="form-input" id="createCapacity" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="createStatus">
+                            ${statusOptions.map(option => `
+                                <option value="${option.value}">${option.label}</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                </div>
+
+                <div id="createFormMessages"></div>
+            </div>
+        `;
+	}
+
+	renderVehicleCreateFooter() {
+		return `
+            <button class="btn-secondary" onclick="vehiclesPage.closeModal()">Cancel</button>
+            <button class="btn-primary" onclick="vehiclesPage.createVehicle()">Create Vehicle</button>
+        `;
+	}
+
+	async createVehicle() {
+		try {
+			this.showLoading();
+
+			const formData = {
+				plate_number: document.getElementById('createPlateNumber').value,
+				model: document.getElementById('createModel').value,
+				capacity_kg: document.getElementById('createCapacity').value,
+				status: document.getElementById('createStatus').value
+			};
+
+			if (!formData.plate_number.trim() || !formData.model.trim() || !formData.capacity_kg) {
+				throw new Error('Plate number, model and capacity are required');
+			}
+
+			const response = await this.apiCall('api/create_vehicle.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(formData)
+			});
+
+			if (response.status === 'success') {
+				this.showSuccess('Vehicle created successfully');
+				this.closeModal();
+				this.loadData();
+			} else {
+				throw new Error(response.message);
+			}
+		} catch (error) {
+			this.showError('Failed to create vehicle: ' + error.message);
+		} finally {
+			this.hideLoading();
+		}
+	}
 }
 
 window.vehiclesPage = new VehiclesPage();
