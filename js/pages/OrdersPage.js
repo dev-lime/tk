@@ -328,29 +328,29 @@ class OrdersPage extends TablePage {
         <div class="edit-form">
             <div class="form-row">
                 <div class="form-group">
-                    <label class="label">Origin *</label>
+                    <label>Origin *</label>
                     <input type="text" id="editOrigin" value="${order.origin || ''}" required>
                 </div>
                 <div class="form-group">
-                    <label class="label">Destination *</label>
+                    <label>Destination *</label>
                     <input type="text" id="editDestination" value="${order.destination || ''}" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label class="label">Price ($)</label>
+                    <label>Price ($)</label>
                     <input type="number" id="editPrice" step="0.01" value="${order.price || ''}">
                 </div>
                 <div class="form-group">
-                    <label class="label">Weight (kg)</label>
+                    <label>Weight (kg)</label>
                     <input type="number" id="editWeight" value="${order.weight || ''}">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label class="label">Status</label>
+                    <label>Status</label>
                     <select class="form-select" id="editStatus">
                         ${statusOptions.map(option => `
                             <option value="${option.value}" ${order.status === option.value ? 'selected' : ''}>
@@ -360,14 +360,14 @@ class OrdersPage extends TablePage {
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="label">Delivery Date</label>
+                    <label>Delivery Date</label>
                     <input type="date" id="editDeliveryDate" 
                            value="${order.delivery_date ? order.delivery_date.split('T')[0] : ''}">
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="label">
+                <label>
                     Driver
                     <span class="availability-info" id="driverAvailabilityInfo"></span>
                 </label>
@@ -378,7 +378,7 @@ class OrdersPage extends TablePage {
             </div>
 
             <div class="form-group">
-                <label class="label">Vehicle</label>
+                <label>Vehicle</label>
                 <select class="form-select" id="editVehicleId">
                     <option value="">No vehicle assigned</option>
                     <!-- Vehicles will be loaded dynamically -->
@@ -386,7 +386,7 @@ class OrdersPage extends TablePage {
             </div>
 
             <div class="form-group">
-                <label class="label">Cargo Description</label>
+                <label>Cargo Description</label>
                 <textarea class="form-textarea" id="editDescription" rows="3">${order.description || ''}</textarea>
             </div>
 

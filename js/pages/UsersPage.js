@@ -120,40 +120,41 @@ class UsersPage extends TablePage {
             <div class="edit-form">
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Username *</label>
-                        <input type="text" class="form-input" id="editUsername" value="${user.username || ''}" required>
+                        <label>Username *</label>
+                        <input type="text" id="editUsername" value="${user.username || ''}" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-input" id="editEmail" value="${user.email || ''}">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">First Name *</label>
-                        <input type="text" class="form-input" id="editFirstName" value="${user.first_name || ''}" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Last Name *</label>
-                        <input type="text" class="form-input" id="editLastName" value="${user.last_name || ''}" required>
+                        <label>Email</label>
+                        <input type="email" id="editEmail" value="${user.email || ''}">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Middle Name</label>
-                        <input type="text" class="form-input" id="editMiddleName" value="${user.middle_name || ''}">
+                        <label>First Name *</label>
+                        <input type="text" id="editFirstName" value="${user.first_name || ''}" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Phone</label>
-                        <input type="tel" class="form-input" id="editPhone" value="${user.phone || ''}" 
-                               pattern="^\+?[0-9]{7,20}$" title="Phone number format: +1234567890">
+                        <label>Last Name *</label>
+                        <input type="text" id="editLastName" value="${user.last_name || ''}" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Middle Name</label>
+                        <input type="text" id="editMiddleName" value="${user.middle_name || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="editPhone" value="${user.phone || ''}" 
+                               placeholder="+1234567890 or 1234567">
+                        <small style="color: #666; font-size: 12px;">Format: +1234567890 or 1234567 (7-20 digits)</small>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Roles</label>
+                    <label>Roles</label>
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 8px;">
                         ${roleOptions.map(role => `
                             <label style="display: flex; align-items: center; gap: 8px;">
@@ -169,16 +170,16 @@ class UsersPage extends TablePage {
                 <!-- Client specific fields -->
                 <div id="clientFields" style="${user.roles.includes('client') ? '' : 'display: none;'}">
                     <div class="form-group">
-                        <label class="form-label">Company Name</label>
-                        <input type="text" class="form-input" id="editCompanyName" value="${user.company_name || ''}">
+                        <label>Company Name</label>
+                        <input type="text" id="editCompanyName" value="${user.company_name || ''}">
                     </div>
                 </div>
 
                 <!-- Driver specific fields -->
                 <div id="driverFields" style="${user.roles.includes('driver') ? '' : 'display: none;'}">
                     <div class="form-group">
-                        <label class="form-label">License Number *</label>
-                        <input type="text" class="form-input" id="editLicenseNumber" value="${user.license_number || ''}">
+                        <label>License Number *</label>
+                        <input type="text" id="editLicenseNumber" value="${user.license_number || ''}">
                     </div>
                 </div>
 
@@ -192,6 +193,69 @@ class UsersPage extends TablePage {
                 <div id="editFormMessages"></div>
             </div>
         `;
+	}
+
+	async updateUser(userId) {
+		try {
+			this.showLoading();
+
+			const phone = document.getElementById('editPhone').value;
+
+			// Валидация телефона
+			if (phone && !this.isValidPhone(phone)) {
+				throw new Error('Phone number format is invalid. Use format: +1234567890 or 1234567 (7-20 digits)');
+			}
+
+			const formData = {
+				user_id: userId,
+				username: document.getElementById('editUsername').value,
+				email: document.getElementById('editEmail').value,
+				first_name: document.getElementById('editFirstName').value,
+				last_name: document.getElementById('editLastName').value,
+				middle_name: document.getElementById('editMiddleName').value,
+				phone: phone,
+				roles: Array.from(document.querySelectorAll('input[name="roles"]:checked')).map(cb => cb.value)
+			};
+
+			// Add role-specific data
+			if (formData.roles.includes('client')) {
+				formData.company_name = document.getElementById('editCompanyName').value;
+			}
+			if (formData.roles.includes('driver')) {
+				formData.license_number = document.getElementById('editLicenseNumber').value;
+				if (!formData.license_number.trim()) {
+					throw new Error('License number is required for drivers');
+				}
+			}
+
+			if (!formData.username.trim() || !formData.first_name.trim() || !formData.last_name.trim()) {
+				throw new Error('Username, first name and last name are required');
+			}
+
+			const response = await this.apiCall('api/update_user.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(formData)
+			});
+
+			if (response.status === 'success') {
+				this.showSuccess('User updated successfully');
+				this.closeModal();
+				this.loadData();
+			} else {
+				throw new Error(response.message);
+			}
+		} catch (error) {
+			this.showError('Failed to update user: ' + error.message);
+		} finally {
+			this.hideLoading();
+		}
+	}
+
+	isValidPhone(phone) {
+		// Регулярное выражение для проверки телефона: необязательный +, затем 7-20 цифр
+		const phoneRegex = /^\+?[0-9]{7,20}$/;
+		return phoneRegex.test(phone);
 	}
 
 	renderUserEditFooter(user) {

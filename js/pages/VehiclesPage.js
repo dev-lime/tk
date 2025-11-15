@@ -129,22 +129,22 @@ class VehiclesPage extends TablePage {
             <div class="edit-form">
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Plate Number *</label>
-                        <input type="text" class="form-input" id="editPlateNumber" value="${vehicle.plate_number || ''}" required>
+                        <label>Plate Number *</label>
+                        <input type="text" id="editPlateNumber" value="${vehicle.plate_number || ''}" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Model *</label>
-                        <input type="text" class="form-input" id="editModel" value="${vehicle.model || ''}" required>
+                        <label>Model *</label>
+                        <input type="text" id="editModel" value="${vehicle.model || ''}" required>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Capacity (kg) *</label>
-                        <input type="number" class="form-input" id="editCapacity" value="${vehicle.capacity_kg || ''}" required min="1">
+                        <label>Capacity (kg) *</label>
+                        <input type="number" id="editCapacity" value="${vehicle.capacity_kg || ''}" required min="1">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Status</label>
+                        <label>Status</label>
                         <select class="form-select" id="editStatus">
                             ${statusOptions.map(option => `
                                 <option value="${option.value}" ${vehicle.status === option.value ? 'selected' : ''}>
