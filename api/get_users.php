@@ -94,8 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || $_SERVER['REQUEST_METHOD'] === 'OPTI
 		while ($row = pg_fetch_assoc($result)) {
 			// Get roles for each user
 			$rolesQuery = "SELECT r.role_name FROM user_roles ur 
-                          JOIN roles r ON ur.role_id = r.role_id 
-                          WHERE ur.user_id = $1";
+                  JOIN roles r ON ur.role_id = r.role_id 
+                  WHERE ur.user_id = $1";
 			$rolesResult = pg_query_params($con, $rolesQuery, [$row['user_id']]);
 
 			$roles = [];
@@ -104,7 +104,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || $_SERVER['REQUEST_METHOD'] === 'OPTI
 			}
 
 			$row['roles'] = $roles;
-			$users[] = $row;
 
 			// Get specialized info for clients and drivers
 			$specializedInfo = [];
@@ -120,10 +119,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || $_SERVER['REQUEST_METHOD'] === 'OPTI
 			$driverQuery = "SELECT license_number FROM drivers WHERE user_id = $1";
 			$driverResult = pg_query_params($con, $driverQuery, [$row['user_id']]);
 			if (pg_num_rows($driverResult) > 0) {
-				$specializedInfo['driver'] = pg_fetch_assoc($driverResult);
+				$driverData = pg_fetch_assoc($driverResult);
+				$specializedInfo['driver'] = $driverData;
+				$row['license_number'] = $driverData['license_number'];
 			}
 
 			$row['specialized_info'] = $specializedInfo;
+			$users[] = $row;
 		}
 
 		echo json_encode([
