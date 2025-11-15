@@ -225,11 +225,25 @@ class VehiclesPage extends TablePage {
 		this.loadData();
 	}
 
-	deleteVehicle(vehicleId) {
-		if (!confirm('Are you sure you want to delete this vehicle?')) return;
+	async deleteVehicle(vehicleId) {
+		if (!confirm('Are you sure you want to delete this vehicle? This action cannot be undone.')) return;
 
-		// Заглушка для удаления
-		this.showSuccess(`Delete vehicle ${vehicleId} functionality will be implemented soon!`);
+		try {
+			const response = await this.apiCall('api/delete_vehicle.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ vehicle_id: vehicleId })
+			});
+
+			if (response.status === 'success') {
+				this.showSuccess('Vehicle deleted successfully');
+				this.loadData();
+			} else {
+				throw new Error(response.message);
+			}
+		} catch (error) {
+			this.showError('Failed to delete vehicle: ' + error.message);
+		}
 	}
 }
 

@@ -341,22 +341,20 @@ class UsersPage extends TablePage {
 	}
 
 	async deleteUser(userId) {
-		if (!confirm('Are you sure you want to delete this user?')) return;
+		if (!confirm('Are you sure you want to delete this user? This will remove all associated data including orders, client/driver information. This action cannot be undone.')) return;
 
 		try {
-			const response = await fetch('api/delete_user.php', {
+			const response = await this.apiCall('api/delete_user.php', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ user_id: userId })
 			});
 
-			const data = await response.json();
-
-			if (data.status === 'success') {
-				this.loadData();
+			if (response.status === 'success') {
 				this.showSuccess('User deleted successfully');
+				this.loadData();
 			} else {
-				throw new Error(data.message);
+				throw new Error(response.message);
 			}
 		} catch (error) {
 			this.showError('Failed to delete user: ' + error.message);
