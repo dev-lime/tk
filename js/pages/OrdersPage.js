@@ -166,7 +166,7 @@ class OrdersPage extends TablePage {
                 <div class="view-field">
                     <div class="view-label">Client</div>
                     <div class="view-value">
-                        <div><strong>${order.client_name}</strong></div>
+                        <div>${order.client_name}</div>
                         ${order.company_name ? `<div>Company: ${order.company_name}</div>` : ''}
                         ${order.client_email ? `<div>Email: ${order.client_email}</div>` : ''}
                         ${order.client_phone ? `<div>Phone: ${order.client_phone}</div>` : ''}
@@ -205,9 +205,9 @@ class OrdersPage extends TablePage {
                 ${order.driver_name ? `
                 <div class="view-field">
                     <div class="view-label" style="color: #28a745; font-weight: 600;">Assigned Driver</div>
-                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 8px;">
-                        <div><strong>Driver:</strong> ${order.driver_name}</div>
-                        ${order.driver_license ? `<div><strong>License:</strong> ${order.driver_license}</div>` : ''}
+                    <div style="border-radius: 6px; margin-top: 8px;">
+                        <div>Driver: ${order.driver_name}</div>
+                        ${order.driver_license ? `<div>License: ${order.driver_license}</div>` : ''}
                     </div>
                 </div>
                 ` : ''}
@@ -215,12 +215,12 @@ class OrdersPage extends TablePage {
                 ${order.vehicle_model ? `
                 <div class="view-field">
                     <div class="view-label" style="color: #fd7e14; font-weight: 600;">Assigned Vehicle</div>
-                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 8px;">
-                        <div><strong>Model:</strong> ${order.vehicle_model}</div>
-                        <div><strong>License Plate:</strong> ${order.vehicle_plate}</div>
-                        <div><strong>Capacity:</strong> ${order.vehicle_capacity ? order.vehicle_capacity + ' kg' : '-'}</div>
+                    <div style="border-radius: 6px; margin-top: 8px;">
+                        <div>Model: ${order.vehicle_model}</div>
+                        <div>License Plate: ${order.vehicle_plate}</div>
+                        <div>Capacity: ${order.vehicle_capacity ? order.vehicle_capacity + ' kg' : '-'}</div>
                         ${order.vehicle_status ? `
-                        <div><strong>Status:</strong> 
+                        <div>Status:
                             <span class="status-badge ${vehicleStatusClass}">${order.vehicle_status}</span>
                         </div>
                         ` : ''}
@@ -258,10 +258,10 @@ class OrdersPage extends TablePage {
                 ${order.history && order.history.length > 0 ? `
                 <div class="view-field">
                     <div class="view-label">Order History</div>
-                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 8px; max-height: 200px; overflow-y: auto;">
+                    <div style="padding: 12px; border-radius: 6px; margin-top: 8px; max-height: 200px; overflow-y: auto;">
                         ${order.history.map(entry => `
                             <div style="padding: 4px 0; border-bottom: 1px solid #e9ecef;">
-                                <div><strong>${entry.action}</strong> - ${new Date(entry.created_at).toLocaleString()}</div>
+                                <div>${entry.action} - ${new Date(entry.created_at).toLocaleString()}</div>
                                 ${entry.description ? `<div style="font-size: 12px; color: #666;">${entry.description}</div>` : ''}
                             </div>
                         `).join('')}
@@ -284,8 +284,8 @@ class OrdersPage extends TablePage {
 
 	renderOrderFooter(order) {
 		return `
-            <button class="btn-secondary" onclick="ordersPage.closeModal()">Close</button>
-            <button class="btn-primary" onclick="ordersPage.editOrder(${order.order_id})">Edit Order</button>
+            <button class="page-btn" onclick="ordersPage.closeModal()">Close</button>
+            <button class="filter-btn" onclick="ordersPage.editOrder(${order.order_id})">Edit Order</button>
         `;
 	}
 

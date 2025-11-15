@@ -79,7 +79,7 @@ class DriversPage extends TablePage {
 		return `
             <tr>
                 <td>${driver.user_id}</td>
-                <td><strong>${driver.username}</strong></td>
+                <td>${driver.username}</td>
                 <td>${driver.first_name || '-'}</td>
                 <td>${driver.last_name || '-'}</td>
                 <td>${email}</td>

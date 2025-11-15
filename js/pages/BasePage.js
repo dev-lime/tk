@@ -24,7 +24,6 @@ class BasePage {
                 <div class="modal-content">
                     <div class="modal-header">
                         <h2 class="modal-title">${title}</h2>
-                        <button class="modal-close" onclick="app.currentPageInstance.closeModal()">×</button>
                     </div>
                     <div class="modal-body">
                         ${content}

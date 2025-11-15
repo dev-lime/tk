@@ -71,7 +71,7 @@ class ClientsPage extends TablePage {
 		return `
             <tr>
                 <td>${client.user_id}</td>
-                <td><strong>${client.username}</strong></td>
+                <td>${client.username}</td>
                 <td>${client.first_name || '-'}</td>
                 <td>${client.last_name || '-'}</td>
                 <td>${email}</td>
