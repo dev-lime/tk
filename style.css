@@ -563,11 +563,12 @@ option {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	justify-content: right;
 	margin: 20px 0;
+	justify-content: space-between;
 }
 
-.page-btn {
+.page-btn,
+.btn-secondary {
 	background: rgba(255, 255, 255, 0.05);
 	border: none;
 	color: #ccc;
@@ -577,16 +578,19 @@ option {
 	transition: all 0.3s ease;
 }
 
-.page-btn:hover:not(.disabled) {
+.page-btn:hover:not(.disabled),
+.btn-secondary:hover:not(.disabled) {
 	background: rgba(255, 255, 255, 0.1);
 }
 
-.page-btn.active {
+.page-btn.active,
+.btn-secondary.active {
 	background: rgba(66, 133, 244, 0.3);
 	color: #8ab4f8;
 }
 
-.page-btn.disabled {
+.page-btn.disabled,
+.btn-secondary.disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
 }
@@ -602,33 +606,22 @@ option {
 	padding: 0 8px;
 }
 
+.pagination-left {
+	display: flex;
+	align-items: center;
+}
+
+.pagination-right {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
 /* Actions Cell */
 .actions-cell {
 	display: flex;
 	gap: 4px;
 	justify-content: center;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-	.filter-group {
-		flex-direction: column;
-		align-items: stretch;
-	}
-
-	.filter-input,
-	.filter-select {
-		min-width: auto;
-	}
-
-	.data-table {
-		font-size: 14px;
-	}
-
-	.data-table th,
-	.data-table td {
-		padding: 12px 8px;
-	}
 }
 
 /* Модальное окно */
@@ -674,7 +667,7 @@ option {
 .modal-header {
 	padding: 20px 24px;
 	display: flex;
-	justify-content: between;
+	justify-content: space-between;
 	align-items: center;
 }
 
@@ -742,20 +735,7 @@ option {
 	margin-bottom: 12px;
 }
 
-.view-label {
-	font-size: 12px;
-	color: #aaa;
-	margin-bottom: 4px;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-}
-
-.view-value {
-	font-size: 16px;
-	color: #fff;
-	margin: 0;
-}
-
+.view-label,
 label {
 	font-size: 12px;
 	color: #aaa;
@@ -764,6 +744,7 @@ label {
 	letter-spacing: 0.5px;
 }
 
+.view-value,
 .value {
 	font-size: 16px;
 	color: #fff;
@@ -784,49 +765,27 @@ label {
 	background: rgba(66, 133, 244, 0.3);
 }
 
-.btn-secondary {
-	background: rgba(255, 255, 255, 0.05);
-	border: none;
-	color: #ccc;
-	padding: 8px 12px;
-	border-radius: 12px;
-	cursor: pointer;
-	transition: all 0.3s ease;
-}
-
-.btn-secondary:hover:not(.disabled) {
-	background: rgba(255, 255, 255, 0.1);
-}
-
-.btn-secondary.active {
-	background: rgba(66, 133, 244, 0.3);
-	color: #8ab4f8;
-}
-
-.btn-secondary.disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
-}
-
-.pagination {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.pagination-left {
-	display: flex;
-	align-items: center;
-}
-
-.pagination-right {
-	display: flex;
-	align-items: center;
-	gap: 16px;
-}
-
-/* Адаптивность для мобильных устройств */
+/* Responsive */
 @media (max-width: 768px) {
+	.filter-group {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.filter-input,
+	.filter-select {
+		min-width: auto;
+	}
+
+	.data-table {
+		font-size: 14px;
+	}
+
+	.data-table th,
+	.data-table td {
+		padding: 12px 8px;
+	}
+
 	.pagination {
 		flex-direction: column;
 		gap: 16px;
