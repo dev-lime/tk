@@ -1,19 +1,26 @@
-Get-ChildItem -Path "." -Recurse -Force -Attributes "!Hidden" | Where-Object {
-    -not $_.Name.StartsWith(".")
+Get-ChildItem -Path "." -Recurse -Force -Attributes "!Hidden" -Exclude ".*" | Where-Object {
+	$_.FullName -notmatch "\\\.[^\\]*($|\\?)"
 } | ForEach-Object {
-    Write-Host "> $($_.FullName)" -ForegroundColor Green
+	Write-Host "> $($_.FullName)" -ForegroundColor Green
     
-    if ($_.PSIsContainer) {
-        Write-Host "[Directory]"
-    } else {
-        try {
-            $content = Get-Content -Path $_.FullName -Raw -ErrorAction Stop
-            Write-Host $content
-        }
-        catch {
-            Write-Host "[Content cannot be read]"
-        }
-    }
+	if ($_.PSIsContainer) {
+		Write-Host "[Directory]"
+	}
+	else {
+		try {
+			$content = Get-Content -Path $_.FullName -Raw -Encoding UTF8 -ErrorAction Stop
+			Write-Host $content
+		}
+		catch {
+			try {
+				$content = Get-Content -Path $_.FullName -Raw -Encoding Default -ErrorAction Stop
+				Write-Host $content
+			}
+			catch {
+				Write-Host "[Content cannot be read or contains binary data]"
+			}
+		}
+	}
     
-    Write-Host "`n"
+	Write-Host "`n"
 }
