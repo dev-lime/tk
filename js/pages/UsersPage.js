@@ -326,91 +326,73 @@ class UsersPage extends TablePage {
 		}
 	}
 
-	openCreateModal() {
-		const content = this.renderUserCreateForm();
-		const footer = this.renderUserCreateFooter();
-
-		this.showModal('Create New User', content, footer);
-	}
-
-	renderUserCreateForm() {
-		const roleOptions = ['admin', 'dispatcher', 'driver', 'client'];
-
+	renderCreateForm() {
 		return `
             <div class="edit-form">
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Username *</label>
-                        <input type="text" id="createUsername" required>
+                        <label class="form-label">Username *</label>
+                        <input type="text" class="form-input" id="createUsername" required>
                     </div>
                     <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="createEmail">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>First Name *</label>
-                        <input type="text" id="createFirstName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Last Name *</label>
-                        <input type="text" id="createLastName" required>
+                        <label class="form-label">Email *</label>
+                        <input type="email" class="form-input" id="createEmail" required>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Middle Name</label>
-                        <input type="text" id="createMiddleName">
+                        <label class="form-label">First Name *</label>
+                        <input type="text" class="form-input" id="createFirstName" required>
                     </div>
                     <div class="form-group">
-                        <label>Phone</label>
-                        <input type="tel" id="createPhone" 
-                               placeholder="+1234567890 or 1234567">
-                        <small style="color: #666; font-size: 12px;">Format: +1234567890 or 1234567 (7-20 digits)</small>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Password *</label>
-                        <input type="password" id="createPassword" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Confirm Password *</label>
-                        <input type="password" id="createPasswordConfirm" required>
+                        <label class="form-label">Last Name *</label>
+                        <input type="text" class="form-input" id="createLastName" required>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Roles</label>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 8px;">
-                        ${roleOptions.map(role => `
-                            <label style="display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" name="createRoles" value="${role}" 
-                                    onchange="usersPage.toggleCreateRoleFields('${role}')">
-                                ${role.charAt(0).toUpperCase() + role.slice(1)}
-                            </label>
-                        `).join('')}
+                    <label class="form-label">Phone</label>
+                    <input type="tel" class="form-input" id="createPhone">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Password *</label>
+                        <input type="password" class="form-input" id="createPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password *</label>
+                        <input type="password" class="form-input" id="createPasswordConfirm" required>
                     </div>
                 </div>
 
-                <!-- Client specific fields -->
-                <div id="createClientFields" style="display: none;">
-                    <div class="form-group">
-                        <label>Company Name</label>
-                        <input type="text" id="createCompanyName">
+                <div class="form-group">
+                    <label class="form-label">Roles *</label>
+                    <div class="roles-checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="roles" value="client" id="roleClient"> Client
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="roles" value="driver" id="roleDriver"> Driver
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="roles" value="dispatcher" id="roleDispatcher"> Dispatcher
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="roles" value="admin" id="roleAdmin"> Admin
+                        </label>
                     </div>
                 </div>
 
-                <!-- Driver specific fields -->
-                <div id="createDriverFields" style="display: none;">
-                    <div class="form-group">
-                        <label>License Number *</label>
-                        <input type="text" id="createLicenseNumber">
-                    </div>
+                <div class="form-group" id="clientFields" style="display: none;">
+                    <label class="form-label">Company Name</label>
+                    <input type="text" class="form-input" id="createCompanyName">
+                </div>
+
+                <div class="form-group" id="driverFields" style="display: none;">
+                    <label class="form-label">Driver License Number *</label>
+                    <input type="text" class="form-input" id="createLicenseNumber">
                 </div>
 
                 <div id="createFormMessages"></div>
@@ -418,25 +400,51 @@ class UsersPage extends TablePage {
         `;
 	}
 
-	renderUserCreateFooter() {
-		return `
-            <button class="btn-secondary" onclick="usersPage.closeModal()">Cancel</button>
-            <button class="btn-primary" onclick="usersPage.createUser()">Create User</button>
-        `;
+	openCreateModal() {
+		const content = this.renderCreateForm();
+		const footer = this.renderCreateFooter();
+
+		this.showModal('Create New User', content, footer);
+
+		setTimeout(() => {
+			this.initCreateFormHandlers();
+		}, 100);
 	}
 
-	toggleCreateRoleFields(role) {
-		const checkbox = document.querySelector(`input[name="createRoles"][value="${role}"]`);
-		if (role === 'client') {
-			document.getElementById('createClientFields').style.display = checkbox.checked ? 'block' : 'none';
-		} else if (role === 'driver') {
-			document.getElementById('createDriverFields').style.display = checkbox.checked ? 'block' : 'none';
-			const licenseInput = document.getElementById('createLicenseNumber');
-			if (checkbox.checked) {
-				licenseInput.required = true;
-			} else {
-				licenseInput.required = false;
-			}
+	initCreateFormHandlers() {
+		const roleCheckboxes = document.querySelectorAll('input[name="roles"]');
+
+		roleCheckboxes.forEach(checkbox => {
+			checkbox.addEventListener('change', () => {
+				this.toggleRoleSpecificFields();
+			});
+		});
+
+		this.toggleRoleSpecificFields();
+	}
+
+	toggleRoleSpecificFields() {
+		const isClientSelected = document.getElementById('roleClient').checked;
+		const isDriverSelected = document.getElementById('roleDriver').checked;
+
+		// Показывает/скрывает поля для клиента
+		const clientFields = document.getElementById('clientFields');
+		clientFields.style.display = isClientSelected ? 'block' : 'none';
+
+		// Показывает/скрывает поля для водителя
+		const driverFields = document.getElementById('driverFields');
+		driverFields.style.display = isDriverSelected ? 'block' : 'none';
+
+		const companyNameField = document.getElementById('createCompanyName');
+		const licenseField = document.getElementById('createLicenseNumber');
+
+		companyNameField.removeAttribute('required');
+
+		// License number обязателен только для водителей
+		if (isDriverSelected) {
+			licenseField.setAttribute('required', 'required');
+		} else {
+			licenseField.removeAttribute('required');
 		}
 	}
 
@@ -444,48 +452,36 @@ class UsersPage extends TablePage {
 		try {
 			this.showLoading();
 
-			const password = document.getElementById('createPassword').value;
-			const passwordConfirm = document.getElementById('createPasswordConfirm').value;
-			const phone = document.getElementById('createPhone').value;
-
-			// Валидация пароля
-			if (password !== passwordConfirm) {
-				throw new Error('Passwords do not match');
-			}
-
-			if (password.length < 6) {
-				throw new Error('Password must be at least 6 characters long');
-			}
-
-			// Валидация телефона
-			if (phone && !this.isValidPhone(phone)) {
-				throw new Error('Phone number format is invalid. Use format: +1234567890 or 1234567 (7-20 digits)');
-			}
-
 			const formData = {
 				username: document.getElementById('createUsername').value,
 				email: document.getElementById('createEmail').value,
 				first_name: document.getElementById('createFirstName').value,
 				last_name: document.getElementById('createLastName').value,
-				middle_name: document.getElementById('createMiddleName').value,
-				phone: phone,
-				password: password,
-				roles: Array.from(document.querySelectorAll('input[name="createRoles"]:checked')).map(cb => cb.value)
+				phone: document.getElementById('createPhone').value || null,
+				password: document.getElementById('createPassword').value,
+				roles: []
 			};
 
-			// Add role-specific data
-			if (formData.roles.includes('client')) {
-				formData.company_name = document.getElementById('createCompanyName').value;
-			}
-			if (formData.roles.includes('driver')) {
-				formData.license_number = document.getElementById('createLicenseNumber').value;
-				if (!formData.license_number.trim()) {
-					throw new Error('License number is required for drivers');
-				}
+			document.querySelectorAll('input[name="roles"]:checked').forEach(checkbox => {
+				formData.roles.push(checkbox.value);
+			});
+
+			const isClientSelected = formData.roles.includes('client');
+			const isDriverSelected = formData.roles.includes('driver');
+
+			if (isClientSelected) {
+				formData.company_name = document.getElementById('createCompanyName').value || null;
 			}
 
-			if (!formData.username.trim() || !formData.first_name.trim() || !formData.last_name.trim()) {
-				throw new Error('Username, first name and last name are required');
+			if (isDriverSelected) {
+				formData.license_number = document.getElementById('createLicenseNumber').value;
+			}
+
+			console.log('Sending form data:', formData); // Для отладки
+
+			const errors = this.validateUserForm(formData);
+			if (errors.length > 0) {
+				throw new Error(errors.join('\n'));
 			}
 
 			const response = await this.apiCall('api/create_user.php', {
@@ -506,6 +502,61 @@ class UsersPage extends TablePage {
 		} finally {
 			this.hideLoading();
 		}
+	}
+
+	validateUserForm(formData) {
+		const errors = [];
+
+		if (!formData.username.trim()) {
+			errors.push('Username is required');
+		}
+
+		if (!formData.email.trim()) {
+			errors.push('Email is required');
+		} else if (!this.isValidEmail(formData.email)) {
+			errors.push('Please enter a valid email address');
+		}
+
+		if (!formData.first_name.trim()) {
+			errors.push('First name is required');
+		}
+
+		if (!formData.last_name.trim()) {
+			errors.push('Last name is required');
+		}
+
+		if (!formData.password) {
+			errors.push('Password is required');
+		} else if (formData.password.length < 6) {
+			errors.push('Password must be at least 6 characters long');
+		} else if (formData.password !== document.getElementById('createPasswordConfirm').value) {
+			errors.push('Passwords do not match');
+		}
+
+		if (formData.roles.length === 0) {
+			errors.push('At least one role must be selected');
+		}
+
+		if (formData.roles.includes('driver')) {
+			const licenseNumber = document.getElementById('createLicenseNumber').value;
+			if (!licenseNumber.trim()) {
+				errors.push('License number is required for drivers');
+			}
+		}
+
+		return errors;
+	}
+
+	isValidEmail(email) {
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		return emailRegex.test(email);
+	}
+
+	renderCreateFooter() {
+		return `
+            <button class="btn-secondary" onclick="usersPage.closeModal()">Cancel</button>
+            <button class="btn-primary" onclick="usersPage.createUser()">Create User</button>
+        `;
 	}
 }
 

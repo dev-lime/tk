@@ -7,36 +7,6 @@ header('Access-Control-Allow-Headers: Content-Type');
 
 require_once '../config/database.php';
 
-// Helper functions (те же что в update_user.php)
-function getRoleId($roleName)
-{
-	$roleMap = [
-		'admin' => 1,
-		'client' => 2,
-		'driver' => 3,
-		'dispatcher' => 4
-	];
-	return $roleMap[$roleName] ?? null;
-}
-
-function createClient($con, $userId, $companyName)
-{
-	$insertQuery = "INSERT INTO clients (user_id, company_name) VALUES ($1, $2)";
-	pg_query_params($con, $insertQuery, [$userId, $companyName]);
-}
-
-function createDriver($con, $userId, $licenseNumber)
-{
-	$insertQuery = "INSERT INTO drivers (user_id, license_number) VALUES ($1, $2)";
-	pg_query_params($con, $insertQuery, [$userId, $licenseNumber]);
-}
-
-function createDispatcher($con, $userId)
-{
-	$insertQuery = "INSERT INTO dispatchers (user_id) VALUES ($1)";
-	pg_query_params($con, $insertQuery, [$userId]);
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 	if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 		http_response_code(200);
@@ -50,85 +20,120 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'OPT
 		}
 
 		$userRoles = $_SESSION['user']['roles'];
-		if (!in_array('admin', $userRoles)) {
-			throw new Exception("Access denied: Admin privileges required");
+		$allowedRoles = ['admin'];
+
+		if (!array_intersect($allowedRoles, $userRoles)) {
+			throw new Exception("Access denied: Insufficient permissions");
 		}
 
+		// Get JSON input
 		$input = json_decode(file_get_contents('php://input'), true);
 
 		if (!$input) {
-			throw new Exception("Invalid JSON input");
+			throw new Exception("Invalid input data");
 		}
 
 		// Validate required fields
-		if (empty($input['username']) || empty($input['first_name']) || empty($input['last_name']) || empty($input['password'])) {
-			throw new Exception("Username, first name, last name and password are required");
+		$requiredFields = ['username', 'password', 'email', 'first_name', 'last_name', 'roles'];
+		foreach ($requiredFields as $field) {
+			if (empty($input[$field])) {
+				throw new Exception("Field '{$field}' is required");
+			}
+		}
+
+		// Validate roles
+		if (!is_array($input['roles']) || empty($input['roles'])) {
+			throw new Exception("At least one role must be selected");
 		}
 
 		$con = getDBConnection();
 
+		if (!$con) {
+			throw new Exception("Database connection failed");
+		}
+
 		// Check if username already exists
-		$checkQuery = "SELECT user_id FROM users WHERE username = $1";
-		$checkResult = pg_query_params($con, $checkQuery, [$input['username']]);
+		$checkQuery = "SELECT user_id FROM users WHERE username = $1 OR email = $2";
+		$checkResult = pg_query_params($con, $checkQuery, [$input['username'], $input['email']]);
+
 		if (pg_num_rows($checkResult) > 0) {
-			throw new Exception("Username already exists");
+			throw new Exception("Username or email already exists");
 		}
 
-		// Check if email already exists
-		if (!empty($input['email'])) {
-			$emailCheckQuery = "SELECT user_id FROM users WHERE email = $1";
-			$emailCheckResult = pg_query_params($con, $emailCheckQuery, [$input['email']]);
-			if (pg_num_rows($emailCheckResult) > 0) {
-				throw new Exception("Email already exists");
-			}
-		}
-
-		// Hash password
-		$passwordHash = password_hash($input['password'], PASSWORD_DEFAULT);
+		// Start transaction
+		pg_query($con, "BEGIN");
 
 		// Insert user
-		$insertQuery = "INSERT INTO users (username, password_hash, first_name, last_name, middle_name, phone, email) 
-                       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING user_id";
-		$insertParams = [
+		$userQuery = "INSERT INTO users (username, password_hash, first_name, last_name, email, phone) 
+                     VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_id";
+
+		$passwordHash = password_hash($input['password'], PASSWORD_DEFAULT);
+
+		$userParams = [
 			$input['username'],
 			$passwordHash,
 			$input['first_name'],
 			$input['last_name'],
-			$input['middle_name'] ?? null,
-			$input['phone'] ?? null,
-			$input['email'] ?? null
+			$input['email'],
+			$input['phone'] ?? null
 		];
 
-		$result = pg_query_params($con, $insertQuery, $insertParams);
+		$userResult = pg_query_params($con, $userQuery, $userParams);
 
-		if (!$result) {
+		if (!$userResult) {
 			throw new Exception("Failed to create user: " . pg_last_error($con));
 		}
 
-		$userId = pg_fetch_result($result, 0, 'user_id');
+		$userId = pg_fetch_result($userResult, 0, 'user_id');
 
-		// Assign roles
-		if (isset($input['roles']) && is_array($input['roles'])) {
-			foreach ($input['roles'] as $role) {
-				$roleId = getRoleId($role);
-				if ($roleId) {
-					$roleQuery = "INSERT INTO user_roles (user_id, role_id) VALUES ($1, $2)";
-					pg_query_params($con, $roleQuery, [$userId, $roleId]);
-				}
+		// Insert roles
+		foreach ($input['roles'] as $roleName) {
+			// Get role_id
+			$roleQuery = "SELECT role_id FROM roles WHERE role_name = $1";
+			$roleResult = pg_query_params($con, $roleQuery, [$roleName]);
 
-				// Create specialized records
-				if ($role === 'client') {
-					createClient($con, $userId, $input['company_name'] ?? '');
-				} elseif ($role === 'driver') {
-					if (empty($input['license_number'])) {
-						throw new Exception("License number is required for drivers");
-					}
-					createDriver($con, $userId, $input['license_number']);
-				} elseif ($role === 'dispatcher') {
-					createDispatcher($con, $userId);
+			if (pg_num_rows($roleResult) > 0) {
+				$roleId = pg_fetch_result($roleResult, 0, 'role_id');
+
+				$userRoleQuery = "INSERT INTO user_roles (user_id, role_id) VALUES ($1, $2)";
+				$userRoleResult = pg_query_params($con, $userRoleQuery, [$userId, $roleId]);
+
+				if (!$userRoleResult) {
+					throw new Exception("Failed to assign role: " . pg_last_error($con));
 				}
+			} else {
+				throw new Exception("Invalid role: {$roleName}");
 			}
 		}
+
+		// Create specialized records based on roles
+		if (in_array('client', $input['roles'])) {
+			$companyName = $input['company_name'] ?? '';
+			// Company name теперь НЕ обязателен
+			$clientQuery = "INSERT INTO clients (user_id, company_name) VALUES ($1, $2)";
+			$clientResult = pg_query_params($con, $clientQuery, [$userId, $companyName]);
+
+			if (!$clientResult) {
+				throw new Exception("Failed to create client record: " . pg_last_error($con));
+			}
+		}
+
+		if (in_array('driver', $input['roles'])) {
+			$licenseNumber = $input['license_number'] ?? '';
+			if (empty($licenseNumber)) {
+				throw new Exception("License number is required for drivers");
+			}
+
+			$driverQuery = "INSERT INTO drivers (user_id, license_number) VALUES ($1, $2)";
+			$driverResult = pg_query_params($con, $driverQuery, [$userId, $licenseNumber]);
+
+			if (!$driverResult) {
+				throw new Exception("Failed to create driver record: " . pg_last_error($con));
+			}
+		}
+
+		// Commit transaction
+		pg_query($con, "COMMIT");
 
 		echo json_encode([
 			'status' => 'success',
@@ -137,6 +142,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'OPT
 		]);
 
 	} catch (Exception $e) {
+		// Rollback on error
+		if ($con) {
+			pg_query($con, "ROLLBACK");
+		}
+
 		error_log("create_user.php error: " . $e->getMessage());
 		http_response_code(500);
 		echo json_encode([
