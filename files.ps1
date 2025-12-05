@@ -24,3 +24,8 @@ Get-ChildItem -Path "." -Recurse -Force -Attributes "!Hidden" -Exclude ".*" | Wh
     
 	Write-Host "`n"
 }
+
+Write-Host "Execution complete. Press 'y' to exit..." -ForegroundColor Cyan
+do {
+	$key = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+} while ($key.Character -notin @('y', 'Y'))

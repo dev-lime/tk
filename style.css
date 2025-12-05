@@ -382,6 +382,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	font-size: 12px;
 	font-weight: 500;
 	text-transform: capitalize;
+	white-space: nowrap;
 }
 
 .status-badge.success {

@@ -15,6 +15,43 @@ class TransportCompanyApp {
 			'notifications': NotificationsPage
 		};
 
+		// Определяем доступные страницы для каждой роли
+		this.rolePermissions = {
+			'admin': [
+				'dashboard',
+				'notifications',
+				'profile',
+				'clients',
+				'drivers',
+				'vehicles',
+				'orders',
+				'users'
+			],
+			'driver': [
+				'dashboard',
+				'notifications',
+				'profile',
+				'clients',
+				'vehicles',
+				'orders'
+			],
+			'client': [
+				'dashboard',
+				'notifications',
+				'profile',
+				'orders'
+			],
+			'dispatcher': [
+				'dashboard',
+				'notifications',
+				'profile',
+				'clients',
+				'drivers',
+				'vehicles',
+				'orders'
+			]
+		};
+
 		this.init();
 	}
 
@@ -24,14 +61,25 @@ class TransportCompanyApp {
 		this.currentUser = authResult.user;
 
 		const initialPage = isAuthenticated ? 'dashboard' : 'login';
-		this.setActivePage(initialPage);
 
+		if (isAuthenticated) {
+			// Обновляем меню на основе ролей пользователя
+			this.updateMenuVisibility();
+		}
+
+		this.setActivePage(initialPage);
 		this.setupEventListeners();
 		this.startGlowAnimation();
 		this.updateUserInfoInSidebar();
 	}
 
 	async setActivePage(pageName) {
+		// Проверяем доступ пользователя к странице
+		if (this.currentUser && !this.canAccessPage(pageName)) {
+			console.warn(`User doesn't have access to page: ${pageName}`);
+			pageName = 'dashboard'; // Перенаправляем на dashboard если нет доступа
+		}
+
 		if (this.currentPageInstance) {
 			await this.currentPageInstance.destroy();
 		}
@@ -47,6 +95,71 @@ class TransportCompanyApp {
 			await this.currentPageInstance.init();
 			this.updateMenuActiveState(pageName);
 		}
+	}
+
+	canAccessPage(pageName) {
+		if (!this.currentUser || !this.currentUser.roles) {
+			return pageName === 'login' || pageName === 'dashboard';
+		}
+
+		// Проверяем все роли пользователя
+		for (const role of this.currentUser.roles) {
+			if (this.rolePermissions[role] && this.rolePermissions[role].includes(pageName)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	updateMenuVisibility() {
+		if (!this.currentUser || !this.currentUser.roles) {
+			return;
+		}
+
+		// Собираем все доступные страницы для пользователя
+		const availablePages = this.getAvailablePagesForUser();
+
+		// Скрываем/показываем элементы меню
+		document.querySelectorAll('.menu-item').forEach(item => {
+			const pageName = item.getAttribute('data-page');
+			if (pageName && pageName !== 'dashboard' && pageName !== 'notifications' && pageName !== 'profile') {
+				if (availablePages.includes(pageName)) {
+					item.style.display = 'flex';
+				} else {
+					item.style.display = 'none';
+				}
+			}
+		});
+
+		// Скрываем группы меню, если все их элементы скрыты
+		document.querySelectorAll('.menu-group').forEach(group => {
+			const visibleItems = group.querySelectorAll('.menu-item[style*="display: flex"], .menu-item:not([style*="display:"])');
+			if (visibleItems.length === 0) {
+				group.style.display = 'none';
+			} else {
+				group.style.display = 'block';
+			}
+		});
+	}
+
+	getAvailablePagesForUser() {
+		if (!this.currentUser || !this.currentUser.roles) {
+			return ['dashboard', 'notifications', 'profile', 'login'];
+		}
+
+		const availablePages = new Set(['dashboard', 'notifications', 'profile']);
+
+		// Собираем все страницы, доступные для ролей пользователя
+		this.currentUser.roles.forEach(role => {
+			if (this.rolePermissions[role]) {
+				this.rolePermissions[role].forEach(page => {
+					availablePages.add(page);
+				});
+			}
+		});
+
+		return Array.from(availablePages);
 	}
 
 	updateMenuActiveState(pageName) {
@@ -65,7 +178,6 @@ class TransportCompanyApp {
 		if (profileDesc) {
 			const roles = this.currentUser.roles ? this.currentUser.roles.join(', ') : 'user';
 			profileDesc.textContent = `${this.currentUser.first_name} ${this.currentUser.last_name} (${roles})`;
-			// ${this.currentUser.username}
 		}
 	}
 
@@ -129,24 +241,24 @@ class TransportCompanyApp {
 			angles = angles.map((angle, index) => (angle + speeds[index]) % 360);
 
 			glow1.style.transform = `translate(
-					${Math.sin(angles[0] * (Math.PI / 180)) * radii[0]}px, 
-					${Math.cos(angles[0] * (Math.PI / 180)) * radii[0]}px
-				)`;
+                    ${Math.sin(angles[0] * (Math.PI / 180)) * radii[0]}px, 
+                    ${Math.cos(angles[0] * (Math.PI / 180)) * radii[0]}px
+                )`;
 
 			glow2.style.transform = `translate(
-					${Math.cos(angles[1] * (Math.PI / 180)) * radii[1]}px, 
-					${Math.sin(angles[1] * (Math.PI / 180)) * radii[1]}px
-				)`;
+                    ${Math.cos(angles[1] * (Math.PI / 180)) * radii[1]}px, 
+                    ${Math.sin(angles[1] * (Math.PI / 180)) * radii[1]}px
+                )`;
 
 			glow3.style.transform = `translate(
-					${Math.sin(angles[2] * (Math.PI / 180) + 0.5) * radii[2]}px, 
-					${Math.cos(angles[2] * (Math.PI / 180) + 0.5) * radii[2]}px
-				)`;
+                    ${Math.sin(angles[2] * (Math.PI / 180) + 0.5) * radii[2]}px, 
+                    ${Math.cos(angles[2] * (Math.PI / 180) + 0.5) * radii[2]}px
+                )`;
 
 			glow4.style.transform = `translate(
-					${Math.cos(angles[3] * (Math.PI / 180) + 0.3) * radii[3]}px, 
-					${Math.sin(angles[3] * (Math.PI / 180) + 0.3) * radii[3]}px
-				)`;
+                    ${Math.cos(angles[3] * (Math.PI / 180) + 0.3) * radii[3]}px, 
+                    ${Math.sin(angles[3] * (Math.PI / 180) + 0.3) * radii[3]}px
+                )`;
 
 			const pulse1 = 0.5 + 0.2 * Math.sin(angles[0] * 0.1);
 			const pulse2 = 0.5 + 0.2 * Math.sin(angles[1] * 0.1 + 0.5);
